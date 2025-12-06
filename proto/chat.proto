@@ -1,5 +1,5 @@
 syntax = "proto3";
-package auth;
+package chat;
 
 option go_package = "github.com/Dev-Siri/sero/proto/chat;chatpb";
 

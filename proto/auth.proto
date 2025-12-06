@@ -3,12 +3,14 @@ package auth;
 
 option go_package = "github.com/Dev-Siri/sero/proto/auth;authpb";
 
+import "google/protobuf/empty.proto";
+
 service AuthService {
   rpc Login(AuthRequest) returns (TokenResponse);
   rpc BeginSignup(AuthRequest) returns (SignupSession);
   rpc VerifyOtp(OtpRequest) returns (OtpResponse);
   rpc CompleteSignup(AuthRequest) returns (TokenResponse);
-  rpc UpdateProfile(UpdateProfileRequest) returns (SignupSession);
+  rpc UpdateProfile(UpdateProfileRequest) returns (google.protobuf.Empty);
 }
 
 message AuthRequest {
