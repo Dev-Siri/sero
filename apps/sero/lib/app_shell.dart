@@ -11,9 +11,9 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
+    return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        if (context.read<AuthBloc>().state is AuthStateAuthorized) {
+        if (state is AuthStateAuthorized) {
           return child;
         }
 

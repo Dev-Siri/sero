@@ -23,21 +23,22 @@ class App extends StatelessWidget {
           ),
         ),
       ],
-      child: SafeArea(
-        child: MaterialApp.router(
-          title: "Wavelength",
-          routerConfig: router,
-          themeMode: ThemeMode.light,
-          theme: ThemeData(
-            primaryColor: Colors.blue,
-            scaffoldBackgroundColor: Colors.white,
-            appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
-            fontFamily: "Geist",
-            fontFamilyFallback: const ["AppleColorEmoji", "NotoColorEmoji"],
-            textSelectionTheme: TextSelectionThemeData(
-              selectionColor: Colors.blue.withAlpha(102),
-              selectionHandleColor: Colors.blue,
-            ),
+      child: MaterialApp.router(
+        title: "Sero",
+        routerConfig: router,
+        themeMode: ThemeMode.light,
+        theme: ThemeData(
+          primaryColor: Color.fromRGBO(0, 85, 255, 1),
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+          ),
+          fontFamily: "Geist",
+          fontFamilyFallback: const ["AppleColorEmoji", "NotoColorEmoji"],
+          textSelectionTheme: TextSelectionThemeData(
+            selectionColor: Colors.blue.withAlpha(102),
+            selectionHandleColor: Colors.blue,
           ),
         ),
       ),

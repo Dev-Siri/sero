@@ -20,14 +20,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  vector_graphics_compiler: ^1.1.19
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
   flutter_lints: ^6.0.0
 flutter:
   uses-material-design: true
   assets:
     - .env
     - assets/
-    - assets/icons
-    - assets/fonts
   fonts:
     - family: Geist
       fonts:
