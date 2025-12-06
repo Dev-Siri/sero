@@ -1,0 +1,39 @@
+syntax = "proto3";
+package auth;
+
+option go_package = "github.com/Dev-Siri/sero/proto/auth;authpb";
+
+service AuthService {
+  rpc Login(AuthRequest) returns (TokenResponse);
+  rpc BeginSignup(AuthRequest) returns (SignupSession);
+  rpc VerifyOtp(OtpRequest) returns (OtpResponse);
+  rpc CompleteSignup(AuthRequest) returns (TokenResponse);
+  rpc UpdateProfile(UpdateProfileRequest) returns (SignupSession);
+}
+
+message AuthRequest {
+  string phone = 1;
+}
+
+message TokenResponse {
+  string auth_token = 1;
+}
+
+message SignupSession {
+  string session_id = 2;
+}
+
+message OtpRequest {
+  string session_id = 1;
+  string otp = 2;
+}
+
+message OtpResponse {
+  bool is_otp_valid = 1;
+}
+
+message UpdateProfileRequest {
+  string user_id = 1;
+  string name = 2;
+  string email = 3;
+}

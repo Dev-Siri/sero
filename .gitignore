@@ -1,0 +1,2 @@
+# generated protoc files
+proto/**/*.pb.go
