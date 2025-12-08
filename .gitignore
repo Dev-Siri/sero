@@ -1,2 +1,6 @@
 # generated protoc files
 proto/**/*.pb.go
+
+# environment variables
+.env
+.env.*

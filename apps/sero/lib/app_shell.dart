@@ -17,7 +17,7 @@ class AppShell extends StatelessWidget {
           return child;
         }
 
-        return LoginScreen();
+        return const LoginScreen();
       },
     );
   }

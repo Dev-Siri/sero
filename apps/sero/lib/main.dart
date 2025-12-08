@@ -28,7 +28,7 @@ class App extends StatelessWidget {
         routerConfig: router,
         themeMode: ThemeMode.light,
         theme: ThemeData(
-          primaryColor: Color.fromRGBO(0, 85, 255, 1),
+          primaryColor: const Color.fromRGBO(0, 85, 255, 1),
           scaffoldBackgroundColor: Colors.white,
           appBarTheme: const AppBarTheme(
             backgroundColor: Colors.white,

@@ -6,23 +6,18 @@ option go_package = "github.com/Dev-Siri/sero/proto/auth;authpb";
 import "google/protobuf/empty.proto";
 
 service AuthService {
-  rpc Login(AuthRequest) returns (TokenResponse);
-  rpc BeginSignup(AuthRequest) returns (SignupSession);
+  rpc CreateSession(SessionRequest) returns (SessionResponse);
   rpc VerifyOtp(OtpRequest) returns (OtpResponse);
-  rpc CompleteSignup(AuthRequest) returns (TokenResponse);
+  rpc CompleteAuth(CompleteAuthRequest) returns (AuthResponse);
   rpc UpdateProfile(UpdateProfileRequest) returns (google.protobuf.Empty);
 }
 
-message AuthRequest {
+message SessionResponse {
+  string session_id = 1;
+}
+
+message SessionRequest {
   string phone = 1;
-}
-
-message TokenResponse {
-  string auth_token = 1;
-}
-
-message SignupSession {
-  string session_id = 2;
 }
 
 message OtpRequest {
@@ -31,7 +26,29 @@ message OtpRequest {
 }
 
 message OtpResponse {
-  bool is_otp_valid = 1;
+  enum OtpValidityStatus {
+    INVALID_OTP = 0;
+    VALID_OTP = 1;
+    EXPIRED_OTP = 2;
+  }
+
+  OtpValidityStatus otp_validity_status = 1;
+}
+
+message CompleteAuthRequest {
+  string session_id = 1;
+  string phone = 2;
+}
+
+message AuthResponse {
+  enum AuthType {
+    NEW_USER = 0;
+    EXISTING_USER = 1;
+  }
+
+  AuthType auth_type = 1;
+  string user_id = 2;
+  string token = 3;
 }
 
 message UpdateProfileRequest {
