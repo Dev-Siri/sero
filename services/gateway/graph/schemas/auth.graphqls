@@ -1,0 +1,31 @@
+enum OtpValidityStatus {
+  VALID
+  INVALID
+  EXPIRED
+}
+
+enum AuthType {
+  NEW_USER
+  EXISTING_USER
+}
+
+type Session {
+  sessionId: ID!
+}
+
+input OtpInput {
+  sessionId: ID!
+  otp: String!
+}
+
+type AuthenticatedUser {
+  userId: ID!
+  authType: AuthType!
+  token: String!
+}
+
+type Mutation {
+  createSession(phone: String!): Session!
+  verifyOtp(otp: OtpInput!): OtpValidityStatus!
+  completeAuth(otp: OtpInput!): Session!
+}

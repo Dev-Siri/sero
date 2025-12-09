@@ -4,3 +4,5 @@ proto/**/*.pb.go
 # environment variables
 .env
 .env.*
+
+/bin
