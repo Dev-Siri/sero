@@ -14,7 +14,7 @@ import (
 
 // CreateSession is the resolver for the createSession field.
 func (r *mutationResolver) CreateSession(ctx context.Context, phone string) (*model.Session, error) {
-	panic(fmt.Errorf("not implemented: CreateSession - createSession"))
+	return nil, fmt.Errorf("not implemented: CreateSession - createSession")
 }
 
 // VerifyOtp is the resolver for the verifyOtp field.
