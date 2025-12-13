@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
 import "package:sero/blocs/auth/auth_bloc.dart";
+import "package:sero/graphql/client.dart";
 import "package:sero/router.dart";
 
 void main() {
@@ -13,6 +14,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final gqlClient = createGqlClient();
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -20,6 +23,7 @@ class App extends StatelessWidget {
             const FlutterSecureStorage(
               aOptions: AndroidOptions(encryptedSharedPreferences: true),
             ),
+            gqlClient,
           ),
         ),
       ],

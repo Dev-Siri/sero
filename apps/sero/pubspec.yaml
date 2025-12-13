@@ -16,8 +16,10 @@ dependencies:
   flutter_bloc: ^9.1.1
   flutter_secure_storage: ^9.2.4
   flutter_svg: ^2.2.3
+  flutter_otp_text_field: ^1.5.1+1
   vector_graphics: ^1.1.19
   intl_phone_field: ^3.2.0
+  graphql_flutter: ^5.2.1
 
 dev_dependencies:
   flutter_test:
