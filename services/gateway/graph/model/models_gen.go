@@ -15,6 +15,11 @@ type AuthenticatedUser struct {
 	Token    string   `json:"token"`
 }
 
+type CompleteAuthInput struct {
+	SessionID string `json:"sessionId"`
+	Phone     string `json:"phone"`
+}
+
 type Mutation struct {
 }
 

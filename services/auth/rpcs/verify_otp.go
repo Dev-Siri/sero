@@ -10,7 +10,7 @@ import (
 )
 
 func (s *AuthService) VerifyOtp(ctx context.Context, request *authpb.OtpRequest) (*authpb.OtpResponse, error) {
-	otp, err := db.Redis.Get(context.Background(), request.SessionId).Result()
+	otp, err := db.Redis.Get(ctx, request.SessionId).Result()
 
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func (s *AuthService) VerifyOtp(ctx context.Context, request *authpb.OtpRequest)
 		}, nil
 	}
 
-	if err := db.Redis.Set(context.Background(), utils.GetOtpIsVerifiedKey(otp), true, constants.ApplicationOtpTimeout).Err(); err != nil {
+	if err := db.Redis.Set(ctx, utils.GetOtpIsVerifiedKey(otp), true, constants.ApplicationOtpTimeout).Err(); err != nil {
 		return nil, err
 	}
 

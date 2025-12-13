@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func CreateAuthClient() (*authpb.AuthServiceClient, error) {
+func CreateAuthClient() (authpb.AuthServiceClient, error) {
 	authServiceUrl, err := env.GetAuthServiceURL()
 
 	if err != nil {
@@ -20,8 +20,6 @@ func CreateAuthClient() (*authpb.AuthServiceClient, error) {
 		return nil, err
 	}
 
-	defer connection.Close()
-
 	client := authpb.NewAuthServiceClient(connection)
-	return &client, nil
+	return client, nil
 }

@@ -53,7 +53,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CompleteAuth  func(childComplexity int, otp model.OtpInput) int
+		CompleteAuth  func(childComplexity int, authInfo model.CompleteAuthInput) int
 		CreateSession func(childComplexity int, phone string) int
 		VerifyOtp     func(childComplexity int, otp model.OtpInput) int
 	}
@@ -69,7 +69,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreateSession(ctx context.Context, phone string) (*model.Session, error)
 	VerifyOtp(ctx context.Context, otp model.OtpInput) (model.OtpValidityStatus, error)
-	CompleteAuth(ctx context.Context, otp model.OtpInput) (*model.Session, error)
+	CompleteAuth(ctx context.Context, authInfo model.CompleteAuthInput) (*model.AuthenticatedUser, error)
 }
 
 type executableSchema struct {
@@ -120,7 +120,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CompleteAuth(childComplexity, args["otp"].(model.OtpInput)), true
+		return e.complexity.Mutation.CompleteAuth(childComplexity, args["authInfo"].(model.CompleteAuthInput)), true
 	case "Mutation.createSession":
 		if e.complexity.Mutation.CreateSession == nil {
 			break
@@ -159,6 +159,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCompleteAuthInput,
 		ec.unmarshalInputOtpInput,
 	)
 	first := true
@@ -279,11 +280,11 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_completeAuth_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "otp", ec.unmarshalNOtpInput2githubᚗcomᚋDevᚑSiriᚋseroᚋservicesᚋgatewayᚋgraphᚋmodelᚐOtpInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "authInfo", ec.unmarshalNCompleteAuthInput2githubᚗcomᚋDevᚑSiriᚋseroᚋservicesᚋgatewayᚋgraphᚋmodelᚐCompleteAuthInput)
 	if err != nil {
 		return nil, err
 	}
-	args["otp"] = arg0
+	args["authInfo"] = arg0
 	return args, nil
 }
 
@@ -553,10 +554,10 @@ func (ec *executionContext) _Mutation_completeAuth(ctx context.Context, field gr
 		ec.fieldContext_Mutation_completeAuth,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CompleteAuth(ctx, fc.Args["otp"].(model.OtpInput))
+			return ec.resolvers.Mutation().CompleteAuth(ctx, fc.Args["authInfo"].(model.CompleteAuthInput))
 		},
 		nil,
-		ec.marshalNSession2ᚖgithubᚗcomᚋDevᚑSiriᚋseroᚋservicesᚋgatewayᚋgraphᚋmodelᚐSession,
+		ec.marshalNAuthenticatedUser2ᚖgithubᚗcomᚋDevᚑSiriᚋseroᚋservicesᚋgatewayᚋgraphᚋmodelᚐAuthenticatedUser,
 		true,
 		true,
 	)
@@ -570,10 +571,14 @@ func (ec *executionContext) fieldContext_Mutation_completeAuth(ctx context.Conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "sessionId":
-				return ec.fieldContext_Session_sessionId(ctx, field)
+			case "userId":
+				return ec.fieldContext_AuthenticatedUser_userId(ctx, field)
+			case "authType":
+				return ec.fieldContext_AuthenticatedUser_authType(ctx, field)
+			case "token":
+				return ec.fieldContext_AuthenticatedUser_token(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Session", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type AuthenticatedUser", field.Name)
 		},
 	}
 	defer func() {
@@ -2173,6 +2178,40 @@ func (ec *executionContext) fieldContext___Type_isOneOf(_ context.Context, field
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputCompleteAuthInput(ctx context.Context, obj any) (model.CompleteAuthInput, error) {
+	var it model.CompleteAuthInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"sessionId", "phone"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "sessionId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sessionId"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SessionID = data
+		case "phone":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phone"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Phone = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputOtpInput(ctx context.Context, obj any) (model.OtpInput, error) {
 	var it model.OtpInput
 	asMap := map[string]any{}
@@ -2761,6 +2800,20 @@ func (ec *executionContext) marshalNAuthType2githubᚗcomᚋDevᚑSiriᚋseroᚋ
 	return v
 }
 
+func (ec *executionContext) marshalNAuthenticatedUser2githubᚗcomᚋDevᚑSiriᚋseroᚋservicesᚋgatewayᚋgraphᚋmodelᚐAuthenticatedUser(ctx context.Context, sel ast.SelectionSet, v model.AuthenticatedUser) graphql.Marshaler {
+	return ec._AuthenticatedUser(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAuthenticatedUser2ᚖgithubᚗcomᚋDevᚑSiriᚋseroᚋservicesᚋgatewayᚋgraphᚋmodelᚐAuthenticatedUser(ctx context.Context, sel ast.SelectionSet, v *model.AuthenticatedUser) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AuthenticatedUser(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v any) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -2775,6 +2828,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNCompleteAuthInput2githubᚗcomᚋDevᚑSiriᚋseroᚋservicesᚋgatewayᚋgraphᚋmodelᚐCompleteAuthInput(ctx context.Context, v any) (model.CompleteAuthInput, error) {
+	res, err := ec.unmarshalInputCompleteAuthInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (string, error) {

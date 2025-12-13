@@ -7,6 +7,7 @@ import (
 	authpb "github.com/Dev-Siri/sero/proto/authpb"
 	"github.com/Dev-Siri/sero/services/auth/db"
 	"github.com/Dev-Siri/sero/services/auth/rpcs"
+	"github.com/Dev-Siri/sero/services/auth/sms"
 	shared_db "github.com/Dev-Siri/sero/shared/db"
 	"github.com/Dev-Siri/sero/shared/env"
 	"github.com/Dev-Siri/sero/shared/logging"
@@ -35,14 +36,11 @@ func main() {
 		}
 	}()
 
-	dsn, err := env.GetDSN()
-	if err != nil {
-		logging.Logger.Error("Unable to get database URL (DSN): ", zap.Error(err))
-	}
-
-	if err := shared_db.Connect(dsn); err != nil {
+	if err := shared_db.Connect(); err != nil {
 		logging.Logger.Error("Failed to initialize Postgres connection.", zap.Error(err))
 	}
+
+	sms.InitTwilio()
 
 	port := env.GetPort()
 	addr := ":" + port
@@ -52,7 +50,9 @@ func main() {
 		logging.Logger.Error("TCP Listener failed to listen on provided address.", zap.String("addr", addr), zap.Error(err))
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(logging.GrpcLoggingInterceptor),
+	)
 	authpb.RegisterAuthServiceServer(grpcServer, &rpcs.AuthService{})
 	reflection.Register(grpcServer)
 
