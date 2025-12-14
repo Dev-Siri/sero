@@ -7,6 +7,6 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *AuthService) UpdateProfile(ctx context.Context, req *authpb.UpdateProfileRequest) (*emptypb.Empty, error) {
+func (s *AuthService) UpdateProfile(ctx context.Context, request *authpb.UpdateProfileRequest) (*emptypb.Empty, error) {
 	return &emptypb.Empty{}, nil
 }

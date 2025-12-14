@@ -12,18 +12,19 @@ import (
 	"github.com/Dev-Siri/sero/shared/logging"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
 
 func (s *AuthService) CompleteAuth(ctx context.Context, request *authpb.CompleteAuthRequest) (*authpb.AuthResponse, error) {
 	otp, err := db.Redis.Get(ctx, request.SessionId).Result()
 
-	if err != nil {
+	if err != nil && err != redis.Nil {
 		logging.Logger.Error("Failed to get otp from Redis.", zap.Error(err))
 		return nil, err
 	}
 
-	if otp == "" {
+	if err == redis.Nil {
 		logging.Logger.Error("No OTP found for sessionId.", zap.String("sessionId", request.SessionId))
 		return nil, fmt.Errorf("no OTP found for sessionId: %s", request.SessionId)
 	}
@@ -42,9 +43,7 @@ func (s *AuthService) CompleteAuth(ctx context.Context, request *authpb.Complete
 	}
 
 	row, err := shared_db.Database.Query(`
-		SELECT
-			user_id
-		FROM User
+		SELECT user_id FROM Users
 		WHERE phone = $1
 		LIMIT 1;
 	`, request.Phone)
@@ -54,20 +53,24 @@ func (s *AuthService) CompleteAuth(ctx context.Context, request *authpb.Complete
 		return nil, err
 	}
 
+	defer row.Close()
+
 	var userId string
 
-	if err := row.Scan(&userId); err != nil {
-		logging.Logger.Error("Failed to decode userId from database row.", zap.Error(err))
-		return nil, err
+	if row.Next() {
+		if err := row.Scan(&userId); err != nil {
+			logging.Logger.Error("Failed to decode userId from database row.", zap.Error(err))
+			return nil, err
+		}
 	}
 
 	var authType authpb.AuthResponse_AuthType
 
 	if userId == "" {
-		authType = authpb.AuthResponse_NEW_USER
+		authType = authpb.AuthResponse_NEW
 		userId = uuid.NewString()
 	} else {
-		authType = authpb.AuthResponse_EXISTING_USER
+		authType = authpb.AuthResponse_EXISTING
 	}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

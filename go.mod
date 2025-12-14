@@ -10,6 +10,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
 	github.com/redis/go-redis/v9 v9.17.2
+	github.com/twilio/twilio-go v1.28.8
 	github.com/valyala/fasthttp v1.68.0
 	github.com/vektah/gqlparser/v2 v2.5.31
 	go.uber.org/zap v1.27.1
@@ -35,7 +36,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
-	github.com/twilio/twilio-go v1.28.8 // indirect
 	github.com/urfave/cli/v3 v3.6.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect

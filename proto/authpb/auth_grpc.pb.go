@@ -22,18 +22,22 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	AuthService_CreateSession_FullMethodName = "/auth.AuthService/CreateSession"
 	AuthService_VerifyOtp_FullMethodName     = "/auth.AuthService/VerifyOtp"
+	AuthService_ResendOtp_FullMethodName     = "/auth.AuthService/ResendOtp"
 	AuthService_CompleteAuth_FullMethodName  = "/auth.AuthService/CompleteAuth"
 	AuthService_UpdateProfile_FullMethodName = "/auth.AuthService/UpdateProfile"
+	AuthService_FetchUser_FullMethodName     = "/auth.AuthService/FetchUser"
 )
 
 // AuthServiceClient is the client API for AuthService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
-	CreateSession(ctx context.Context, in *SessionRequest, opts ...grpc.CallOption) (*SessionResponse, error)
+	CreateSession(ctx context.Context, in *SessionRequest, opts ...grpc.CallOption) (*Session, error)
 	VerifyOtp(ctx context.Context, in *OtpRequest, opts ...grpc.CallOption) (*OtpResponse, error)
+	ResendOtp(ctx context.Context, in *ResendOtpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CompleteAuth(ctx context.Context, in *CompleteAuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	FetchUser(ctx context.Context, in *FetchUserRequest, opts ...grpc.CallOption) (*User, error)
 }
 
 type authServiceClient struct {
@@ -44,9 +48,9 @@ func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 	return &authServiceClient{cc}
 }
 
-func (c *authServiceClient) CreateSession(ctx context.Context, in *SessionRequest, opts ...grpc.CallOption) (*SessionResponse, error) {
+func (c *authServiceClient) CreateSession(ctx context.Context, in *SessionRequest, opts ...grpc.CallOption) (*Session, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SessionResponse)
+	out := new(Session)
 	err := c.cc.Invoke(ctx, AuthService_CreateSession_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -58,6 +62,16 @@ func (c *authServiceClient) VerifyOtp(ctx context.Context, in *OtpRequest, opts 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OtpResponse)
 	err := c.cc.Invoke(ctx, AuthService_VerifyOtp_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) ResendOtp(ctx context.Context, in *ResendOtpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AuthService_ResendOtp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,14 +98,26 @@ func (c *authServiceClient) UpdateProfile(ctx context.Context, in *UpdateProfile
 	return out, nil
 }
 
+func (c *authServiceClient) FetchUser(ctx context.Context, in *FetchUserRequest, opts ...grpc.CallOption) (*User, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(User)
+	err := c.cc.Invoke(ctx, AuthService_FetchUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
 type AuthServiceServer interface {
-	CreateSession(context.Context, *SessionRequest) (*SessionResponse, error)
+	CreateSession(context.Context, *SessionRequest) (*Session, error)
 	VerifyOtp(context.Context, *OtpRequest) (*OtpResponse, error)
+	ResendOtp(context.Context, *ResendOtpRequest) (*emptypb.Empty, error)
 	CompleteAuth(context.Context, *CompleteAuthRequest) (*AuthResponse, error)
 	UpdateProfile(context.Context, *UpdateProfileRequest) (*emptypb.Empty, error)
+	FetchUser(context.Context, *FetchUserRequest) (*User, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -102,17 +128,23 @@ type AuthServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAuthServiceServer struct{}
 
-func (UnimplementedAuthServiceServer) CreateSession(context.Context, *SessionRequest) (*SessionResponse, error) {
+func (UnimplementedAuthServiceServer) CreateSession(context.Context, *SessionRequest) (*Session, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateSession not implemented")
 }
 func (UnimplementedAuthServiceServer) VerifyOtp(context.Context, *OtpRequest) (*OtpResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method VerifyOtp not implemented")
+}
+func (UnimplementedAuthServiceServer) ResendOtp(context.Context, *ResendOtpRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResendOtp not implemented")
 }
 func (UnimplementedAuthServiceServer) CompleteAuth(context.Context, *CompleteAuthRequest) (*AuthResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CompleteAuth not implemented")
 }
 func (UnimplementedAuthServiceServer) UpdateProfile(context.Context, *UpdateProfileRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateProfile not implemented")
+}
+func (UnimplementedAuthServiceServer) FetchUser(context.Context, *FetchUserRequest) (*User, error) {
+	return nil, status.Error(codes.Unimplemented, "method FetchUser not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -171,6 +203,24 @@ func _AuthService_VerifyOtp_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_ResendOtp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResendOtpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ResendOtp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_ResendOtp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ResendOtp(ctx, req.(*ResendOtpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AuthService_CompleteAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CompleteAuthRequest)
 	if err := dec(in); err != nil {
@@ -207,6 +257,24 @@ func _AuthService_UpdateProfile_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_FetchUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FetchUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).FetchUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_FetchUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).FetchUser(ctx, req.(*FetchUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -223,12 +291,20 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_VerifyOtp_Handler,
 		},
 		{
+			MethodName: "ResendOtp",
+			Handler:    _AuthService_ResendOtp_Handler,
+		},
+		{
 			MethodName: "CompleteAuth",
 			Handler:    _AuthService_CompleteAuth_Handler,
 		},
 		{
 			MethodName: "UpdateProfile",
 			Handler:    _AuthService_UpdateProfile_Handler,
+		},
+		{
+			MethodName: "FetchUser",
+			Handler:    _AuthService_FetchUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

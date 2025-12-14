@@ -7,16 +7,17 @@ import (
 	"github.com/Dev-Siri/sero/services/auth/constants"
 	"github.com/Dev-Siri/sero/services/auth/db"
 	"github.com/Dev-Siri/sero/services/auth/utils"
+	"github.com/redis/go-redis/v9"
 )
 
 func (s *AuthService) VerifyOtp(ctx context.Context, request *authpb.OtpRequest) (*authpb.OtpResponse, error) {
 	otp, err := db.Redis.Get(ctx, request.SessionId).Result()
 
-	if err != nil {
+	if err != nil && err != redis.Nil {
 		return nil, err
 	}
 
-	if otp == "" {
+	if err == redis.Nil {
 		// Does not exist, so it's likely expired.
 		return &authpb.OtpResponse{
 			OtpValidityStatus: authpb.OtpResponse_EXPIRED_OTP,

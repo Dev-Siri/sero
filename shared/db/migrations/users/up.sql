@@ -1,7 +1,7 @@
 CREATE TABLE Users(
   user_id CHAR(36) PRIMARY KEY,
   phone VARCHAR(15) UNIQUE NOT NULL,
-  display_name VARCHAR(100) NOT NULL,
+  display_name VARCHAR(100),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   status_text VARCHAR(50),
   picture_url VARCHAR(255)

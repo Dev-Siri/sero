@@ -5,11 +5,11 @@ import (
 	"os"
 )
 
-func GetJwtSecret() (string, error) {
+func GetJwtSecret() ([]byte, error) {
 	jwtSecret := os.Getenv("JWT_SECRET")
 
 	if jwtSecret == "" {
-		return "", errors.New("environment 'JWT_SECRET' variable not set")
+		return nil, errors.New("environment 'JWT_SECRET' variable not set")
 	}
-	return jwtSecret, nil
+	return []byte(jwtSecret), nil
 }

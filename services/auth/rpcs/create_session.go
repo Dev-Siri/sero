@@ -14,7 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *AuthService) CreateSession(ctx context.Context, request *authpb.SessionRequest) (*authpb.SessionResponse, error) {
+func (s *AuthService) CreateSession(ctx context.Context, request *authpb.SessionRequest) (*authpb.Session, error) {
 	existingSession, err := db.Redis.Get(ctx, request.Phone).Result()
 
 	if err != nil && err != redis.Nil {
@@ -23,7 +23,7 @@ func (s *AuthService) CreateSession(ctx context.Context, request *authpb.Session
 	}
 
 	if err != redis.Nil {
-		return &authpb.SessionResponse{
+		return &authpb.Session{
 			SessionId: existingSession,
 		}, nil
 	}
@@ -57,7 +57,7 @@ func (s *AuthService) CreateSession(ctx context.Context, request *authpb.Session
 		return nil, err
 	}
 
-	return &authpb.SessionResponse{
+	return &authpb.Session{
 		SessionId: generatedSessionId,
 	}, nil
 }

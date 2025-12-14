@@ -6,14 +6,21 @@ option go_package = "github.com/Dev-Siri/sero/proto/auth;authpb";
 import "google/protobuf/empty.proto";
 
 service AuthService {
-  rpc CreateSession(SessionRequest) returns (SessionResponse);
+  rpc CreateSession(SessionRequest) returns (Session);
   rpc VerifyOtp(OtpRequest) returns (OtpResponse);
+  rpc ResendOtp(ResendOtpRequest) returns (google.protobuf.Empty);
   rpc CompleteAuth(CompleteAuthRequest) returns (AuthResponse);
   rpc UpdateProfile(UpdateProfileRequest) returns (google.protobuf.Empty);
+  rpc FetchUser(FetchUserRequest) returns (User);
 }
 
-message SessionResponse {
+message Session {
   string session_id = 1;
+}
+
+message ResendOtpRequest {
+  string session_id = 1;
+  string phone = 2;
 }
 
 message SessionRequest {
@@ -42,8 +49,8 @@ message CompleteAuthRequest {
 
 message AuthResponse {
   enum AuthType {
-    NEW_USER = 0;
-    EXISTING_USER = 1;
+    NEW = 0;
+    EXISTING = 1;
   }
 
   AuthType auth_type = 1;
@@ -55,4 +62,17 @@ message UpdateProfileRequest {
   string user_id = 1;
   string name = 2;
   string email = 3;
+}
+
+message FetchUserRequest {
+  string user_id = 1;
+}
+
+message User {
+  string userId = 1;
+  string phone = 2;
+  string createdAt = 3;
+  optional string displayName = 4;
+  optional string statusText = 5;
+  optional string pictureUrl = 6;
 }
