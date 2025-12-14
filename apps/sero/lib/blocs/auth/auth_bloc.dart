@@ -3,6 +3,8 @@ import "package:flutter_secure_storage/flutter_secure_storage.dart";
 import "package:graphql_flutter/graphql_flutter.dart";
 import "package:sero/blocs/auth/auth_event.dart";
 import "package:sero/blocs/auth/auth_state.dart";
+import "package:sero/models/api_response.dart";
+import "package:sero/models/user.dart";
 import "package:sero/repos/auth.dart";
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -13,17 +15,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final GraphQLClient gql;
 
   AuthBloc(this.securedStorage, this.gql) : super(AuthStateInitial()) {
-    // on<AuthCreateSessionEvent>(_createSession);
+    on<AuthLoginUserEvent>(_loginUser);
   }
 
   AuthRepo get repo => AuthRepo(gql);
 
-  // Future<void> _createSession(
-  //   AuthCreateSessionEvent event,
-  //   Emitter<AuthState> emit,
-  // ) async {
-  //   final r = await repo.createSession(phone: "+919674822408");
+  Future<void> _loginUser(
+    AuthLoginUserEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    final user = await repo.fetchUser(event.userId);
 
-  //   print(r);
-  // }
+    if (user is ApiResponseSuccess<User>) {
+      return emit(AuthStateAuthorized(user: user.data, authToken: event.token));
+    }
+  }
 }

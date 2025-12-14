@@ -13,11 +13,25 @@ class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        if (state is AuthStateAuthorized) {
-          return child;
-        }
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 350),
+          switchInCurve: Curves.easeOutCubic,
+          switchOutCurve: Curves.easeInCubic,
+          transitionBuilder: (widget, animation) {
+            final slideAnimation = Tween<Offset>(
+              begin: const Offset(0, -1),
+              end: Offset.zero,
+            ).animate(animation);
 
-        return const LoginScreen();
+            return SlideTransition(position: slideAnimation, child: widget);
+          },
+          child: state is AuthStateAuthorized
+              ? KeyedSubtree(key: const ValueKey("authorized"), child: child)
+              : const KeyedSubtree(
+                  key: ValueKey("login"),
+                  child: LoginScreen(),
+                ),
+        );
       },
     );
   }

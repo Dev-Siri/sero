@@ -3,10 +3,11 @@ import "package:flutter_bloc/flutter_bloc.dart";
 import "package:sero/blocs/auth/auth_bloc.dart";
 import "package:sero/models/api_response.dart";
 import "package:sero/models/otp_validity_status.dart";
+import "package:sero/screens/login/complete_auth.dart";
 import "package:sero/screens/login/verify_otp.dart";
 import "package:sero/screens/login/welcome.dart";
 
-enum LoginStep { welcome, otpVerify }
+enum LoginStep { welcome, otpVerify, completeAuth }
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -61,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
       switch (status) {
         case OtpValidityStatus.valid:
           _isOtpVerified = true;
-          print('wait');
+          _currentStep = LoginStep.completeAuth;
           break;
         case OtpValidityStatus.invalid:
           _error = "Invalid OTP. Try again.";
@@ -69,6 +70,19 @@ class _LoginScreenState extends State<LoginScreen> {
           _error = "The OTP has expired. Try resending OTP.";
       }
     });
+  }
+
+  Future<void> _resendOtp() async {
+    if (_sessionId == null || _phone == null) return;
+
+    final resendResponse = await context.read<AuthBloc>().repo.resendOtp(
+      sessionId: _sessionId ?? "",
+      phone: _phone ?? "",
+    );
+
+    if (resendResponse is ApiResponseError<void>) {
+      setState(() => _error = "Failed to resend OTP.");
+    }
   }
 
   void _revertToFirstStep() => setState(() {
@@ -92,11 +106,18 @@ class _LoginScreenState extends State<LoginScreen> {
         _sessionId != null) {
       return VerifyOtp(
         sessionId: _sessionId ?? "",
-        phone: _phone ?? "+919674822408",
+        phone: _phone ?? "",
         onSubmit: _verifyOtp,
-        error: _error,
         onBack: _revertToFirstStep,
+        onResend: _resendOtp,
+        error: _error,
       );
+    }
+
+    if (_currentStep == LoginStep.completeAuth &&
+        _sessionId != null &&
+        _phone != null) {
+      return CompleteAuth(sessionId: _sessionId ?? "", phone: _phone ?? "");
     }
 
     return const SizedBox.shrink();
