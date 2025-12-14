@@ -5,12 +5,21 @@ enum OtpValidityStatus {
 }
 
 enum AuthType {
-  NEW_USER
-  EXISTING_USER
+  NEW
+  EXISTING
 }
 
 type Session {
   sessionId: ID!
+}
+
+type User {
+  userId: ID!
+  phone: String!
+  displayName: String
+  createdAt: String!
+  statusText: String
+  pictureUrl: String
 }
 
 input OtpInput {
@@ -19,6 +28,11 @@ input OtpInput {
 }
 
 input CompleteAuthInput {
+  sessionId: ID!
+  phone: String!
+}
+
+input ResendOtpInput {
   sessionId: ID!
   phone: String!
 }
@@ -32,5 +46,10 @@ type AuthenticatedUser {
 type Mutation {
   createSession(phone: String!): Session!
   verifyOtp(otp: OtpInput!): OtpValidityStatus!
+  resendOtp(resendInfo: ResendOtpInput!): Boolean
   completeAuth(authInfo: CompleteAuthInput!): AuthenticatedUser!
+}
+
+type Query {
+  getUser(userId: ID!): User!
 }

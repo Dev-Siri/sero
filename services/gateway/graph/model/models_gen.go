@@ -31,25 +31,39 @@ type OtpInput struct {
 type Query struct {
 }
 
+type ResendOtpInput struct {
+	SessionID string `json:"sessionId"`
+	Phone     string `json:"phone"`
+}
+
 type Session struct {
 	SessionID string `json:"sessionId"`
+}
+
+type User struct {
+	UserID      string  `json:"userId"`
+	Phone       string  `json:"phone"`
+	DisplayName *string `json:"displayName,omitempty"`
+	CreatedAt   string  `json:"createdAt"`
+	StatusText  *string `json:"statusText,omitempty"`
+	PictureURL  *string `json:"pictureUrl,omitempty"`
 }
 
 type AuthType string
 
 const (
-	AuthTypeNewUser      AuthType = "NEW_USER"
-	AuthTypeExistingUser AuthType = "EXISTING_USER"
+	AuthTypeNew      AuthType = "NEW"
+	AuthTypeExisting AuthType = "EXISTING"
 )
 
 var AllAuthType = []AuthType{
-	AuthTypeNewUser,
-	AuthTypeExistingUser,
+	AuthTypeNew,
+	AuthTypeExisting,
 }
 
 func (e AuthType) IsValid() bool {
 	switch e {
-	case AuthTypeNewUser, AuthTypeExistingUser:
+	case AuthTypeNew, AuthTypeExisting:
 		return true
 	}
 	return false

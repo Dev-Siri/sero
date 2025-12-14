@@ -9,7 +9,7 @@ import (
 	"github.com/Dev-Siri/sero/services/gateway/constants"
 	"github.com/Dev-Siri/sero/services/gateway/env"
 	"github.com/Dev-Siri/sero/services/gateway/graph"
-	"github.com/Dev-Siri/sero/services/gateway/graph/middleware"
+	"github.com/Dev-Siri/sero/services/gateway/middleware"
 	shared_env "github.com/Dev-Siri/sero/shared/env"
 	"github.com/valyala/fasthttp/fasthttpadaptor"
 
