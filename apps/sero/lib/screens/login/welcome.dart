@@ -2,9 +2,8 @@ import "dart:io";
 
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:flutter_svg/svg.dart";
 import "package:intl_phone_field/intl_phone_field.dart";
-import "package:vector_graphics/vector_graphics_compat.dart";
+import "package:sero/widgets/logo.dart";
 
 class LoginWelcome extends StatefulWidget {
   final void Function(String value) onSubmit;
@@ -24,6 +23,8 @@ class _LoginWelcomeState extends State<LoginWelcome> {
   String _phoneNumber = "";
   String? _shownError;
 
+  bool _isLoading = false;
+
   @override
   void initState() {
     setState(() => _shownError = widget.errorText);
@@ -34,6 +35,13 @@ class _LoginWelcomeState extends State<LoginWelcome> {
   void didChangeDependencies() {
     setState(() => _shownError = widget.errorText);
     super.didChangeDependencies();
+  }
+
+  void _handleSubmit() {
+    if (_isLoading) return;
+
+    setState(() => _isLoading = true);
+    widget.onSubmit(_phoneNumber);
   }
 
   @override
@@ -59,11 +67,7 @@ class _LoginWelcomeState extends State<LoginWelcome> {
                 color: Theme.of(context).primaryColor,
                 borderRadius: BorderRadius.circular(100),
               ),
-              child: const SvgPicture(
-                AssetBytesLoader("assets/vectors/icon.svg.vec"),
-                height: 150,
-                width: 150,
-              ),
+              child: const Logo(height: 150, width: 150, color: Colors.white),
             ),
           ],
         ),
@@ -106,17 +110,19 @@ class _LoginWelcomeState extends State<LoginWelcome> {
             width: double.infinity,
             child: Platform.isIOS
                 ? CupertinoButton.filled(
-                    onPressed: () => widget.onSubmit(_phoneNumber),
+                    onPressed: _handleSubmit,
                     color: Theme.of(context).primaryColor,
+                    disabledColor: Colors.grey,
                     child: const Text(
                       "Send",
                       style: TextStyle(color: Colors.white),
                     ),
                   )
                 : MaterialButton(
-                    onPressed: () => widget.onSubmit(_phoneNumber),
+                    onPressed: _handleSubmit,
                     padding: const EdgeInsetsGeometry.all(12),
                     color: Theme.of(context).primaryColor,
+                    disabledColor: Colors.grey,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),

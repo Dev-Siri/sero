@@ -1,0 +1,89 @@
+syntax = "proto3";
+package auth;
+
+option go_package = "github.com/Dev-Siri/sero/backend/proto/auth;authpb";
+
+import "google/protobuf/empty.proto";
+
+service AuthService {
+  rpc CreateSession(SessionRequest) returns (Session);
+  rpc VerifyOtp(OtpRequest) returns (OtpResponse);
+  rpc ResendOtp(ResendOtpRequest) returns (google.protobuf.Empty);
+  rpc CompleteAuth(CompleteAuthRequest) returns (AuthResponse);
+  rpc UpdateDisplayName(UpdateDisplayNameRequest) returns (google.protobuf.Empty);
+  rpc UpdatePicture(UpdatePictureRequest) returns (google.protobuf.Empty);
+  rpc UploadStatus(UpdateStatusRequest) returns (google.protobuf.Empty);
+  rpc FetchUser(FetchUserRequest) returns (User);
+}
+
+message Session {
+  string session_id = 1;
+}
+
+message ResendOtpRequest {
+  string session_id = 1;
+  string phone = 2;
+}
+
+message SessionRequest {
+  string phone = 1;
+}
+
+message OtpRequest {
+  string session_id = 1;
+  string otp = 2;
+}
+
+message OtpResponse {
+  enum OtpValidityStatus {
+    INVALID_OTP = 0;
+    VALID_OTP = 1;
+    EXPIRED_OTP = 2;
+  }
+
+  OtpValidityStatus otp_validity_status = 1;
+}
+
+message CompleteAuthRequest {
+  string session_id = 1;
+  string phone = 2;
+}
+
+message AuthResponse {
+  enum AuthType {
+    NEW = 0;
+    EXISTING = 1;
+  }
+
+  AuthType auth_type = 1;
+  string user_id = 2;
+  string token = 3;
+}
+
+message UpdateDisplayNameRequest {
+  string user_id = 1;
+  string displayName = 2;
+}
+
+message UpdatePictureRequest {
+  string user_id = 1;
+  string pictureUrl = 2;
+}
+
+message UpdateStatusRequest {
+  string user_id = 1;
+  string status = 2;
+}
+
+message FetchUserRequest {
+  string user_id = 1;
+}
+
+message User {
+  string userId = 1;
+  string phone = 2;
+  string createdAt = 3;
+  optional string displayName = 4;
+  optional string statusText = 5;
+  optional string pictureUrl = 6;
+}

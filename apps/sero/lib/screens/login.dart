@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
-import "package:flutter_bloc/flutter_bloc.dart";
-import "package:sero/blocs/auth/auth_bloc.dart";
+import "package:graphql_flutter/graphql_flutter.dart";
 import "package:sero/models/api_response.dart";
 import "package:sero/models/otp_validity_status.dart";
+import "package:sero/repos/auth.dart";
 import "package:sero/screens/login/complete_auth.dart";
 import "package:sero/screens/login/verify_otp.dart";
 import "package:sero/screens/login/welcome.dart";
@@ -25,9 +25,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isOtpVerified = false;
 
   Future<void> _beginAuth(String phone) async {
-    final createdSession = await context.read<AuthBloc>().repo.createSession(
-      phone: phone,
-    );
+    final repo = AuthRepo(GraphQLProvider.of(context).value);
+    final createdSession = await repo.createSession(phone: phone);
 
     if (createdSession is ApiResponseError<String>) {
       setState(() => _error = createdSession.message);
@@ -45,7 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _verifyOtp(String otp) async {
     if (_sessionId == null) return;
 
-    final otpValidityStatus = await context.read<AuthBloc>().repo.verifyOtp(
+    final repo = AuthRepo(GraphQLProvider.of(context).value);
+    final otpValidityStatus = await repo.verifyOtp(
       otp: otp,
       sessionId: _sessionId ?? "",
     );
@@ -66,8 +66,10 @@ class _LoginScreenState extends State<LoginScreen> {
           break;
         case OtpValidityStatus.invalid:
           _error = "Invalid OTP. Try again.";
+          break;
         case OtpValidityStatus.expired:
           _error = "The OTP has expired. Try resending OTP.";
+          break;
       }
     });
   }
@@ -75,7 +77,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _resendOtp() async {
     if (_sessionId == null || _phone == null) return;
 
-    final resendResponse = await context.read<AuthBloc>().repo.resendOtp(
+    final repo = AuthRepo(GraphQLProvider.of(context).value);
+    final resendResponse = await repo.resendOtp(
       sessionId: _sessionId ?? "",
       phone: _phone ?? "",
     );

@@ -176,11 +176,40 @@ class AuthRepo {
         return ApiResponseError(
           message:
               result.exception?.graphqlErrors[0].message ??
-              "An error occured in while verifying OTP.",
+              "An error occured while fetching user.",
         );
       }
 
       return ApiResponseSuccess(data: User.fromJson(user));
+    } catch (err) {
+      return ApiResponseError(message: err.toString());
+    }
+  }
+
+  Future<ApiResponse<void>> updateDisplayName(String newName) async {
+    const mutation = r"""
+      mutation UpdateDisplayName($newName: String!) {
+        updateDisplayName(newName: $newName)
+      }
+    """;
+
+    try {
+      final result = await gqlClient.mutate(
+        MutationOptions(
+          document: gql(mutation),
+          variables: {"newName": newName},
+        ),
+      );
+
+      if (result.hasException) {
+        return ApiResponseError(
+          message:
+              result.exception?.graphqlErrors[0].message ??
+              "An error occured while updating your name.",
+        );
+      }
+
+      return ApiResponseSuccess(data: null);
     } catch (err) {
       return ApiResponseError(message: err.toString());
     }

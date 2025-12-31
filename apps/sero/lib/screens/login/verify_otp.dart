@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_otp_text_field/flutter_otp_text_field.dart";
-import "package:flutter_svg/flutter_svg.dart";
-import "package:vector_graphics/vector_graphics_compat.dart";
+import "package:sero/widgets/logo.dart";
 
 class VerifyOtp extends StatefulWidget {
   final String sessionId;
@@ -49,12 +48,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
         AppBar(
           leading: BackButton(onPressed: widget.onBack),
           centerTitle: true,
-          title: const SvgPicture(
-            AssetBytesLoader("assets/vectors/icon.svg.vec"),
-            height: 40,
-            width: 40,
-            colorFilter: ColorFilter.mode(Colors.blue, BlendMode.srcIn),
-          ),
+          title: const Logo(height: 50, width: 50),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),

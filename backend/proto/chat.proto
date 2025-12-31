@@ -1,0 +1,7 @@
+syntax = "proto3";
+package chat;
+
+option go_package = "github.com/Dev-Siri/sero/backend/proto/chat;chatpb";
+
+service ChatService {
+}
