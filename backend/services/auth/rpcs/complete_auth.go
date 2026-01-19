@@ -14,14 +14,16 @@ import (
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *AuthService) CompleteAuth(ctx context.Context, request *authpb.CompleteAuthRequest) (*authpb.AuthResponse, error) {
 	otp, err := db.Redis.Get(ctx, request.SessionId).Result()
 
 	if err != nil && err != redis.Nil {
-		logging.Logger.Error("Failed to get otp from Redis.", zap.Error(err))
-		return nil, err
+		logging.Logger.Error("Failed to get OTP from Redis.", zap.Error(err))
+		return nil, status.Error(codes.Internal, "Failed to get OTP from Redis.")
 	}
 
 	if err == redis.Nil {
@@ -33,8 +35,8 @@ func (s *AuthService) CompleteAuth(ctx context.Context, request *authpb.Complete
 	isOtpVerified, err := db.Redis.Get(ctx, isOtpVerifiedKey).Bool()
 
 	if err != nil {
-		logging.Logger.Error("Failed to get isOtpVerified value from ", zap.String("sessionId", request.SessionId))
-		return nil, err
+		logging.Logger.Error("Failed to get isOtpVerified value from Redis.", zap.String("sessionId", request.SessionId), zap.Error(err))
+		return nil, status.Error(codes.Internal, "Failed to get isOtpVerified value from Redis.")
 	}
 
 	if !isOtpVerified {
@@ -93,14 +95,14 @@ func (s *AuthService) CompleteAuth(ctx context.Context, request *authpb.Complete
 	jwtSecret, err := env.GetJwtSecret()
 	if err != nil {
 		logging.Logger.Error("Failed to create JWT secret.", zap.Error(err))
-		return nil, err
+		return nil, status.Error(codes.Internal, "Failed to create JWT secret.")
 	}
 
 	signedToken, err := jwtToken.SignedString(jwtSecret)
 
 	if err != nil {
 		logging.Logger.Error("Failed to generate signed token for user.", zap.Error(err))
-		return nil, err
+		return nil, status.Error(codes.Internal, "Failed to generate signed token for user.")
 	}
 
 	go db.Redis.Del(context.Background(), request.Phone, request.SessionId, isOtpVerifiedKey)

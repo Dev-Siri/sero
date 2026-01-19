@@ -14,7 +14,6 @@ import (
 	"go.uber.org/zap"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -42,7 +41,7 @@ func main() {
 
 	sms.InitTwilio()
 
-	port := env.GetPort()
+	port := env.GetPORT()
 	addr := ":" + port
 
 	listener, err := net.Listen("tcp", addr)
@@ -54,7 +53,6 @@ func main() {
 		grpc.UnaryInterceptor(logging.GrpcLoggingInterceptor),
 	)
 	authpb.RegisterAuthServiceServer(grpcServer, &rpcs.AuthService{})
-	reflection.Register(grpcServer)
 
 	logging.Logger.Info("AuthService listening on "+addr, zap.String("port", port))
 	if err := grpcServer.Serve(listener); err != nil {

@@ -49,7 +49,7 @@ func main() {
 		return next(ctx)
 	})
 
-	port := shared_env.GetPort()
+	port := shared_env.GetPORT()
 	addr := ":" + port
 	app := fiber.New(fiber.Config{
 		ServerHeader:            constants.ServerName,

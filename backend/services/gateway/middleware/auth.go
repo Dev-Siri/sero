@@ -23,7 +23,7 @@ func AuthMiddleware(ctx *fiber.Ctx) error {
 	authHeaderParts := strings.SplitN(authHeader, " ", 2)
 
 	if len(authHeaderParts) != 2 || authHeaderParts[0] != "Bearer" {
-		go logging.Logger.Error("Invalid `Authorization` header.")
+		logging.Logger.Error("Invalid `Authorization` header.")
 		return fiber.NewError(fiber.StatusUnauthorized, "Invalid `Authorization` header.")
 	}
 
@@ -33,12 +33,12 @@ func AuthMiddleware(ctx *fiber.Ctx) error {
 		jwtKey, err := env.GetJwtSecret()
 
 		if err != nil {
-			go logging.Logger.Error("Failed to get jwtKey.", zap.Error(err))
+			logging.Logger.Error("Failed to get jwtKey.", zap.Error(err))
 			return nil, fiber.NewError(fiber.StatusUnauthorized, "Failed to get jwtKey.")
 		}
 
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			go logging.Logger.Error("Failed to get jwtKey.")
+			logging.Logger.Error("Failed to get jwtKey.")
 			return nil, fiber.NewError(fiber.StatusUnauthorized, "Unexpected signing method.")
 		}
 
@@ -46,7 +46,7 @@ func AuthMiddleware(ctx *fiber.Ctx) error {
 	})
 
 	if err != nil || !token.Valid {
-		go logging.Logger.Error("This route is protected. Login to Sero to access it's contents.", zap.Error(err))
+		logging.Logger.Error("This route is protected. Login to Sero to access it's contents.", zap.Error(err))
 		return fiber.NewError(fiber.StatusUnauthorized, "This route is protected. Login to Sero to access it's contents.")
 	}
 
@@ -59,7 +59,7 @@ func AuthMiddleware(ctx *fiber.Ctx) error {
 	user, err := model.ClaimsToAuthenticatedUsers(claims)
 
 	if err != nil {
-		go logging.Logger.Error("Failed to parse claims to AuthenticatedUser.", zap.Error(err))
+		logging.Logger.Error("Failed to parse claims to AuthenticatedUser.", zap.Error(err))
 		return fiber.NewError(fiber.StatusUnauthorized, "Failed to parse claims to AuthenticatedUser.")
 	}
 

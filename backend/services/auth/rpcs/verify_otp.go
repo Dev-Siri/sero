@@ -7,14 +7,19 @@ import (
 	"github.com/Dev-Siri/sero/backend/services/auth/constants"
 	"github.com/Dev-Siri/sero/backend/services/auth/db"
 	"github.com/Dev-Siri/sero/backend/services/auth/utils"
+	"github.com/Dev-Siri/sero/backend/shared/logging"
 	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *AuthService) VerifyOtp(ctx context.Context, request *authpb.OtpRequest) (*authpb.OtpResponse, error) {
 	otp, err := db.Redis.Get(ctx, request.SessionId).Result()
 
 	if err != nil && err != redis.Nil {
-		return nil, err
+		logging.Logger.Error("Failed to get OTP from Redis.", zap.Error(err))
+		return nil, status.Error(codes.Internal, "Failed to get OTP from Redis.")
 	}
 
 	if err == redis.Nil {
@@ -31,7 +36,8 @@ func (s *AuthService) VerifyOtp(ctx context.Context, request *authpb.OtpRequest)
 	}
 
 	if err := db.Redis.Set(ctx, utils.GetOtpIsVerifiedKey(otp), true, constants.ApplicationOtpTimeout).Err(); err != nil {
-		return nil, err
+		logging.Logger.Error("Failed to get otpIsVerifiedKey.", zap.String("otp", otp), zap.Error(err))
+		return nil, status.Error(codes.Internal, "Failed to get otpIsVerifiedKey.")
 	}
 
 	return &authpb.OtpResponse{

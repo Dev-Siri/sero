@@ -2,12 +2,13 @@ package rpcs
 
 import (
 	"context"
-	"errors"
 
 	authpb "github.com/Dev-Siri/sero/backend/proto/authpb"
 	"github.com/Dev-Siri/sero/backend/shared/db"
 	"github.com/Dev-Siri/sero/backend/shared/logging"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -20,13 +21,13 @@ func (s *AuthService) UpdateDisplayName(ctx context.Context, request *authpb.Upd
 	var userCount int
 
 	if err := row.Scan(&userCount); err != nil {
-		go logging.Logger.Error("Failed to read userId count from database.", zap.Error(err))
-		return nil, err
+		logging.Logger.Error("Failed to read userId count from database.", zap.Error(err))
+		return nil, status.Error(codes.Internal, "Failed to read userId count from database.")
 	}
 
 	if userCount < 1 {
-		go logging.Logger.Error("User does not exist.")
-		return nil, errors.New("user does not exist")
+		logging.Logger.Error("User does not exist.")
+		return nil, status.Error(codes.NotFound, "User does not exist.")
 	}
 
 	_, err := db.Database.Exec(`
@@ -36,8 +37,8 @@ func (s *AuthService) UpdateDisplayName(ctx context.Context, request *authpb.Upd
 	`, request.DisplayName, request.UserId)
 
 	if err != nil {
-		go logging.Logger.Error("Failed to update the display name of user.", zap.String("userId", request.UserId), zap.Error(err))
-		return nil, err
+		logging.Logger.Error("Failed to update the display name of user.", zap.String("userId", request.UserId), zap.Error(err))
+		return nil, status.Error(codes.Internal, "Failed to update the display name of user.")
 	}
 
 	return &emptypb.Empty{}, nil

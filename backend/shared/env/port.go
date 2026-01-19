@@ -6,7 +6,7 @@ import (
 	"github.com/Dev-Siri/sero/backend/shared/logging"
 )
 
-func GetPort() string {
+func GetPORT() string {
 	port := os.Getenv("PORT")
 
 	if port == "" {
