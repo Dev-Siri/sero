@@ -1,4 +1,4 @@
-package rpcs
+package auth_rpcs
 
 import (
 	"context"
@@ -12,7 +12,10 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *AuthService) UpdateDisplayName(ctx context.Context, request *authpb.UpdateDisplayNameRequest) (*emptypb.Empty, error) {
+func (s *AuthService) UpdateDisplayName(
+	ctx context.Context,
+	request *authpb.UpdateDisplayNameRequest,
+) (*emptypb.Empty, error) {
 	row := db.Database.QueryRow(`
 		SELECT COUNT(*) FROM Users
 		WHERE user_id = $1;

@@ -1,0 +1,39 @@
+syntax = "proto3";
+package chat;
+
+option go_package = "github.com/Dev-Siri/sero/backend/proto/attachment;attachmentpb";
+
+service AttachmentService {
+  rpc GetSignedURI(GetSignedURIRequest) returns (GetSignedURIResponse);
+  rpc UploadFile(UploadFileRequest) returns (UploadFileResponse);
+}
+
+enum AttachmentKind {
+  ATTACHMENT_KIND_UNSPECIFIED = 0;
+  ATTACHMENT_KIND_IMAGE = 1;
+  ATTACHMENT_KIND_VIDEO = 2;
+  ATTACHMENT_KIND_DOCUMENT = 3;
+}
+
+message GetSignedURIRequest {
+  string name = 1;
+  uint64 size = 2;
+  string mime_type = 3;
+  AttachmentKind kind = 4;
+}
+
+message GetSignedURIResponse {
+  string upload_uri = 1;
+  string file_key = 2;
+}
+
+message UploadFileRequest {
+  string name = 1;
+  string mime_type = 2;
+  string file_key = 3;
+  AttachmentKind kind = 4;
+}
+
+message UploadFileResponse {
+  string attachment_id = 1;  
+}

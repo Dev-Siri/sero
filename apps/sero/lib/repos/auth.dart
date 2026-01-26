@@ -105,7 +105,7 @@ class AuthRepo {
         );
       }
 
-      return ApiResponseSuccess(data: null);
+      return const ApiResponseSuccess(data: null);
     } catch (err) {
       return ApiResponseError(message: err.toString());
     }
@@ -152,7 +152,7 @@ class AuthRepo {
   }
 
   Future<ApiResponse<User>> fetchUser(String userId) async {
-    const mutation = r"""
+    const query = r"""
       query FetchUser($userId: ID!) {
         getUser(userId: $userId) {
           userId,
@@ -167,7 +167,7 @@ class AuthRepo {
 
     try {
       final result = await gqlClient.query(
-        QueryOptions(document: gql(mutation), variables: {"userId": userId}),
+        QueryOptions(document: gql(query), variables: {"userId": userId}),
       );
 
       final user = result.data?["getUser"];
@@ -209,7 +209,134 @@ class AuthRepo {
         );
       }
 
-      return ApiResponseSuccess(data: null);
+      return const ApiResponseSuccess(data: null);
+    } catch (err) {
+      return ApiResponseError(message: err.toString());
+    }
+  }
+
+  Future<ApiResponse<void>> updateStatus(String newStatus) async {
+    const mutation = r"""
+      mutation UpdateStatus($newStatus: String!) {
+        updateStatus(newStatus: $newStatus)
+      }
+    """;
+
+    try {
+      final result = await gqlClient.mutate(
+        MutationOptions(
+          document: gql(mutation),
+          variables: {"newStatus": newStatus},
+        ),
+      );
+
+      if (result.hasException) {
+        return ApiResponseError(
+          message:
+              result.exception?.graphqlErrors[0].message ??
+              "An error occured while updating your status.",
+        );
+      }
+
+      return const ApiResponseSuccess(data: null);
+    } catch (err) {
+      return ApiResponseError(message: err.toString());
+    }
+  }
+
+  Future<ApiResponse<void>> updatePictureUrl(
+    String newPictureAttachmentId,
+  ) async {
+    const mutation = r"""
+      mutation UpdatePictureUrl($newPictureAttachmentId: String!) {
+        updatePictureUrl(newPictureAttachmentId: $newPictureAttachmentId)
+      }
+    """;
+
+    try {
+      final result = await gqlClient.mutate(
+        MutationOptions(
+          document: gql(mutation),
+          variables: {"newPictureAttachmentId": newPictureAttachmentId},
+        ),
+      );
+
+      if (result.hasException) {
+        return ApiResponseError(
+          message:
+              result.exception?.graphqlErrors[0].message ??
+              "An error occured while updating your picture.",
+        );
+      }
+
+      return const ApiResponseSuccess(data: null);
+    } catch (err) {
+      return ApiResponseError(message: err.toString());
+    }
+  }
+
+  Future<ApiResponse<void>> uploadPublicKey({
+    required String algorithm,
+    required String publicKey,
+    required String userToken,
+  }) async {
+    const mutation = r"""
+      mutation UploadPublicKey($algorithm: String!, $publicKey: String!, $userToken: String!) {
+        uploadPublicKey(publicKey: {
+          algorithm: $algorithm
+          publicKey: $publicKey
+          userToken: $userToken
+        })
+      }
+    """;
+
+    try {
+      final result = await gqlClient.mutate(
+        MutationOptions(
+          document: gql(mutation),
+          variables: {
+            "algorithm": algorithm,
+            "publicKey": publicKey,
+            "userToken": userToken,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        return ApiResponseError(
+          message:
+              result.exception?.graphqlErrors[0].message ??
+              "An error occured while uploading public key.",
+        );
+      }
+
+      return const ApiResponseSuccess(data: null);
+    } catch (err) {
+      return ApiResponseError(message: err.toString());
+    }
+  }
+
+  Future<ApiResponse<void>> revokePublicKey() async {
+    const mutation = r"""
+      mutation RevokePublicKey {
+        revokePublicKey
+      }
+    """;
+
+    try {
+      final result = await gqlClient.mutate(
+        MutationOptions(document: gql(mutation)),
+      );
+
+      if (result.hasException) {
+        return ApiResponseError(
+          message:
+              result.exception?.graphqlErrors[0].message ??
+              "An error occured while revoking your public key.",
+        );
+      }
+
+      return const ApiResponseSuccess(data: null);
     } catch (err) {
       return ApiResponseError(message: err.toString());
     }

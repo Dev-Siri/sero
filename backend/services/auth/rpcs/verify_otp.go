@@ -1,4 +1,4 @@
-package rpcs
+package auth_rpcs
 
 import (
 	"context"
@@ -14,7 +14,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *AuthService) VerifyOtp(ctx context.Context, request *authpb.OtpRequest) (*authpb.OtpResponse, error) {
+func (s *AuthService) VerifyOtp(
+	ctx context.Context,
+	request *authpb.OtpRequest,
+) (*authpb.OtpResponse, error) {
 	otp, err := db.Redis.Get(ctx, request.SessionId).Result()
 
 	if err != nil && err != redis.Nil {

@@ -1,7 +1,11 @@
 package graph
 
-import "github.com/Dev-Siri/sero/backend/proto/authpb"
+import (
+	"github.com/Dev-Siri/sero/backend/proto/attachmentpb"
+	"github.com/Dev-Siri/sero/backend/proto/authpb"
+)
 
 type Resolver struct {
-	AuthService authpb.AuthServiceClient
+	AuthService       authpb.AuthServiceClient
+	AttachmentService attachmentpb.AttachmentServiceClient
 }

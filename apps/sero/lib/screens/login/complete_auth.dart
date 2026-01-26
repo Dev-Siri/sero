@@ -13,8 +13,14 @@ import "package:sero/widgets/logo.dart";
 class CompleteAuth extends StatefulWidget {
   final String sessionId;
   final String phone;
+  final void Function(String error) onError;
 
-  const CompleteAuth({super.key, required this.sessionId, required this.phone});
+  const CompleteAuth({
+    super.key,
+    required this.sessionId,
+    required this.phone,
+    required this.onError,
+  });
 
   @override
   State<CompleteAuth> createState() => _CompleteAuthState();
@@ -40,6 +46,8 @@ class _CompleteAuthState extends State<CompleteAuth> {
           userId: user.data.userId,
         ),
       );
+    } else if (user is ApiResponseError<AuthenticatedUser>) {
+      widget.onError(user.message);
     }
   }
 
@@ -60,6 +68,9 @@ class _CompleteAuthState extends State<CompleteAuth> {
       listener: (context, state) {
         if (state is AuthStateAuthorized) {
           context.go("/home");
+        }
+        if (state is AuthStateError) {
+          widget.onError(state.message);
         }
       },
       builder: (context, state) {

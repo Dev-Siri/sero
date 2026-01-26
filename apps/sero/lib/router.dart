@@ -1,6 +1,7 @@
 import "package:go_router/go_router.dart";
 import "package:sero/app_shell.dart";
 import "package:sero/screens/change_name.dart";
+import "package:sero/screens/change_status.dart";
 import "package:sero/screens/edit_profile.dart";
 import "package:sero/screens/home.dart";
 import "package:sero/screens/login.dart";
@@ -23,6 +24,12 @@ final router = GoRouter(
           path: "/profile/edit/name",
           builder: (_, state) => ChangeNameScreen(
             currentName: state.uri.queryParameters["currentName"],
+          ),
+        ),
+        GoRoute(
+          path: "/profile/edit/status",
+          builder: (_, state) => ChangeStatusScreen(
+            currentStatus: state.uri.queryParameters["currentStatus"],
           ),
         ),
       ],

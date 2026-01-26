@@ -1,4 +1,4 @@
-package rpcs
+package auth_rpcs
 
 import (
 	"context"
@@ -18,7 +18,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *AuthService) CompleteAuth(ctx context.Context, request *authpb.CompleteAuthRequest) (*authpb.AuthResponse, error) {
+func (s *AuthService) CompleteAuth(
+	ctx context.Context,
+	request *authpb.CompleteAuthRequest,
+) (*authpb.AuthResponse, error) {
 	otp, err := db.Redis.Get(ctx, request.SessionId).Result()
 
 	if err != nil && err != redis.Nil {

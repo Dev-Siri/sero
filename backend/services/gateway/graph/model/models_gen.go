@@ -9,6 +9,10 @@ import (
 	"strconv"
 )
 
+type AttachmentInfo struct {
+	AttachmentID string `json:"attachmentId"`
+}
+
 type AuthenticatedUser struct {
 	UserID   string   `json:"userId"`
 	AuthType AuthType `json:"authType"`
@@ -20,12 +24,32 @@ type CompleteAuthInput struct {
 	Phone     string `json:"phone"`
 }
 
+type FileInfo struct {
+	Name     string         `json:"name"`
+	Size     int32          `json:"size"`
+	MimeType string         `json:"mimeType"`
+	Kind     AttachmentKind `json:"kind"`
+}
+
 type Mutation struct {
 }
 
 type OtpInput struct {
 	SessionID string `json:"sessionId"`
 	Otp       string `json:"otp"`
+}
+
+type PresignedFileInfo struct {
+	Name     string         `json:"name"`
+	MimeType string         `json:"mimeType"`
+	FileKey  string         `json:"fileKey"`
+	Kind     AttachmentKind `json:"kind"`
+}
+
+type PublicKeyInput struct {
+	Algorithm string `json:"algorithm"`
+	PublicKey string `json:"publicKey"`
+	UserToken string `json:"userToken"`
 }
 
 type Query struct {
@@ -40,6 +64,11 @@ type Session struct {
 	SessionID string `json:"sessionId"`
 }
 
+type SignedURLInfo struct {
+	UploadURI string `json:"uploadUri"`
+	FileKey   string `json:"fileKey"`
+}
+
 type User struct {
 	UserID      string  `json:"userId"`
 	Phone       string  `json:"phone"`
@@ -47,6 +76,63 @@ type User struct {
 	CreatedAt   string  `json:"createdAt"`
 	StatusText  *string `json:"statusText,omitempty"`
 	PictureURL  *string `json:"pictureUrl,omitempty"`
+}
+
+type AttachmentKind string
+
+const (
+	AttachmentKindImage    AttachmentKind = "IMAGE"
+	AttachmentKindVideo    AttachmentKind = "VIDEO"
+	AttachmentKindDocument AttachmentKind = "DOCUMENT"
+)
+
+var AllAttachmentKind = []AttachmentKind{
+	AttachmentKindImage,
+	AttachmentKindVideo,
+	AttachmentKindDocument,
+}
+
+func (e AttachmentKind) IsValid() bool {
+	switch e {
+	case AttachmentKindImage, AttachmentKindVideo, AttachmentKindDocument:
+		return true
+	}
+	return false
+}
+
+func (e AttachmentKind) String() string {
+	return string(e)
+}
+
+func (e *AttachmentKind) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AttachmentKind(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AttachmentKind", str)
+	}
+	return nil
+}
+
+func (e AttachmentKind) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *AttachmentKind) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e AttachmentKind) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type AuthType string

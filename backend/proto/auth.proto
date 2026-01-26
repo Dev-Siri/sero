@@ -12,8 +12,10 @@ service AuthService {
   rpc CompleteAuth(CompleteAuthRequest) returns (AuthResponse);
   rpc UpdateDisplayName(UpdateDisplayNameRequest) returns (google.protobuf.Empty);
   rpc UpdatePicture(UpdatePictureRequest) returns (google.protobuf.Empty);
-  rpc UploadStatus(UpdateStatusRequest) returns (google.protobuf.Empty);
+  rpc UpdateStatus(UpdateStatusRequest) returns (google.protobuf.Empty);
   rpc FetchUser(FetchUserRequest) returns (User);
+  rpc UploadPublicKey(UploadPublicKeyRequest) returns (google.protobuf.Empty);
+  rpc RevokePublicKey(RevokePublicKeyRequest) returns (google.protobuf.Empty);
 }
 
 message Session {
@@ -62,12 +64,12 @@ message AuthResponse {
 
 message UpdateDisplayNameRequest {
   string user_id = 1;
-  string displayName = 2;
+  string display_name = 2;
 }
 
 message UpdatePictureRequest {
   string user_id = 1;
-  string pictureUrl = 2;
+  string picture_url_attachment_id = 2;
 }
 
 message UpdateStatusRequest {
@@ -80,10 +82,20 @@ message FetchUserRequest {
 }
 
 message User {
-  string userId = 1;
+  string user_id = 1;
   string phone = 2;
-  string createdAt = 3;
-  optional string displayName = 4;
-  optional string statusText = 5;
-  optional string pictureUrl = 6;
+  string created_at = 3;
+  optional string display_name = 4;
+  optional string status_text = 5;
+  optional string picture_url = 6;
+}
+
+message UploadPublicKeyRequest {
+  string user_id = 1;
+  string algorithm = 2;
+  string public_key = 3;
+}
+
+message RevokePublicKeyRequest {
+  string user_id = 1;
 }

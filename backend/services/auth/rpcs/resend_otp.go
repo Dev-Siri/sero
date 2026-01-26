@@ -1,4 +1,4 @@
-package rpcs
+package auth_rpcs
 
 import (
 	"context"
@@ -15,7 +15,10 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *AuthService) ResendOtp(ctx context.Context, request *authpb.ResendOtpRequest) (*emptypb.Empty, error) {
+func (s *AuthService) ResendOtp(
+	ctx context.Context,
+	request *authpb.ResendOtpRequest,
+) (*emptypb.Empty, error) {
 	generatedOtp, err := utils.GenerateOTP(constants.ApplicationOtpLength)
 
 	if err != nil {

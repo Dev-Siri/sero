@@ -43,14 +43,24 @@ type AuthenticatedUser {
   token: String!
 }
 
-type Mutation {
+input PublicKeyInput {
+  algorithm: String!
+  publicKey: String!
+  userToken: String!
+}
+
+extend type Mutation {
   createSession(phone: String!): Session!
   verifyOtp(otp: OtpInput!): OtpValidityStatus!
   resendOtp(resendInfo: ResendOtpInput!): Boolean
   completeAuth(authInfo: CompleteAuthInput!): AuthenticatedUser!
   updateDisplayName(newName: String!): Boolean
+  updateStatus(newStatus: String!): Boolean
+  updatePictureUrl(newPictureAttachmentId: String!): Boolean
+  uploadPublicKey(publicKey: PublicKeyInput!): Boolean
+  revokePublicKey: Boolean
 }
 
-type Query {
+extend type Query {
   getUser(userId: ID!): User!
 }

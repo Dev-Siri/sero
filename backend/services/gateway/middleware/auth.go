@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/Dev-Siri/sero/backend/services/auth/env"
@@ -29,45 +30,50 @@ func AuthMiddleware(ctx *fiber.Ctx) error {
 
 	authToken := authHeaderParts[1]
 
+	user, err := ParseAuthToken(authToken)
+	if err != nil {
+		logging.Logger.Error("Failed to parse provided authToken.", zap.Error(err))
+		return fiber.NewError(fiber.StatusUnauthorized, "Failed to parse provided authToken.")
+	}
+
+	ctx.Locals(constants.UserLocalKey, user)
+	return ctx.Next()
+}
+
+func ParseAuthToken(authToken string) (*model.AuthenticatedUser, error) {
 	token, err := jwt.Parse(authToken, func(t *jwt.Token) (any, error) {
 		jwtKey, err := env.GetJwtSecret()
 
 		if err != nil {
 			logging.Logger.Error("Failed to get jwtKey.", zap.Error(err))
-			return nil, fiber.NewError(fiber.StatusUnauthorized, "Failed to get jwtKey.")
+			return nil, errors.New("Failed to get jwtKey.")
 		}
 
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			logging.Logger.Error("Failed to get jwtKey.")
-			return nil, fiber.NewError(fiber.StatusUnauthorized, "Unexpected signing method.")
+			return nil, errors.New("Unexpected signing method.")
 		}
 
 		return jwtKey, nil
 	})
-
 	if err != nil || !token.Valid {
-		logging.Logger.Error("This route is protected. Login to Sero to access it's contents.", zap.Error(err))
-		return fiber.NewError(fiber.StatusUnauthorized, "This route is protected. Login to Sero to access it's contents.")
+		return nil, errors.New("This route is protected. Login to Sero to access it's contents.")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-
 	if !ok || !token.Valid {
-		return fiber.NewError(fiber.StatusUnauthorized, "Invalid token claims.")
+		return nil, errors.New("Invalid token claims.")
 	}
 
 	user, err := model.ClaimsToAuthenticatedUsers(claims)
-
-	if err != nil {
-		logging.Logger.Error("Failed to parse claims to AuthenticatedUser.", zap.Error(err))
-		return fiber.NewError(fiber.StatusUnauthorized, "Failed to parse claims to AuthenticatedUser.")
-	}
-
-	ctx.Locals(constants.UserLocalKey, &user)
-	return ctx.Next()
+	return &user, err
 }
 
 func AuthFromContext(ctx context.Context) *model.AuthenticatedUser {
-	user := ctx.Value(constants.UserLocalKey).(*model.AuthenticatedUser)
+	user, ok := ctx.Value(constants.UserLocalKey).(*model.AuthenticatedUser)
+	if !ok {
+		return nil
+	}
+
 	return user
 }

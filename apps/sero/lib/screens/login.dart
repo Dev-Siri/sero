@@ -120,7 +120,20 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_currentStep == LoginStep.completeAuth &&
         _sessionId != null &&
         _phone != null) {
-      return CompleteAuth(sessionId: _sessionId ?? "", phone: _phone ?? "");
+      return CompleteAuth(
+        sessionId: _sessionId ?? "",
+        phone: _phone ?? "",
+        onError: (error) {
+          _revertToFirstStep();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        },
+      );
     }
 
     return const SizedBox.shrink();

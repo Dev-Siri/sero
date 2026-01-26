@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS Keys(
+  key_id CHAR(36) PRIMARY KEY,
+  user_id CHAR(36) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  public_key VARCHAR(128) NOT NULL,
+  algorithm VARCHAR(16) NOT NULL,
+  revoked_at TIMESTAMP NULL
+);

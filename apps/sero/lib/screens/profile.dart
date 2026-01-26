@@ -3,9 +3,9 @@ import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:go_router/go_router.dart";
 import "package:sero/blocs/auth/auth_bloc.dart";
-import "package:sero/blocs/auth/auth_event.dart";
 import "package:sero/blocs/auth/auth_state.dart";
 import "package:sero/widgets/logo.dart";
+import "package:sero/widgets/logout_button.dart";
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -19,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
       ),
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-          if (state is! AuthStateAuthorized) return const SizedBox.shrink();
+          if (state is! AuthStateAuthorized) return const LogoutButton();
 
           return Column(
             children: [
@@ -35,29 +35,35 @@ class ProfileScreen extends StatelessWidget {
                       child: CircleAvatar(
                         radius: 40,
                         backgroundColor: Theme.of(context).primaryColor,
-                        child: state.user.pictureUrl != null
-                            ? CachedNetworkImage(
-                                imageUrl: state.user.pictureUrl ?? "",
+                        backgroundImage: state.user.pictureUrl != null
+                            ? CachedNetworkImageProvider(
+                                state.user.pictureUrl ?? "",
                               )
                             : null,
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          state.user.displayName ?? "You",
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                        Text(
-                          state.user.statusText ?? "No status set.",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
+                    SizedBox(
+                      width: MediaQuery.sizeOf(context).width / 1.5,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            state.user.displayName ?? "You",
+                            style: const TextStyle(
+                              fontSize: 20,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        ),
-                      ],
+                          Text(
+                            state.user.statusText ?? "No status set.",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -72,25 +78,16 @@ class ProfileScreen extends StatelessWidget {
                 title: const Text("Edit Profile"),
               ),
               ListTile(
-                onTap: () => "",
+                onTap: () => context.push(
+                  "/profile/edit/status${state.user.statusText == null ? "" : "?currentStatus=${state.user.statusText}"}",
+                ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 0,
                 ),
                 title: const Text("Change Status"),
               ),
-              ListTile(
-                onTap: () =>
-                    context.read<AuthBloc>().add(AuthLogoutUserEvent()),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 0,
-                ),
-                title: const Text(
-                  "Logout",
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
+              const LogoutButton(),
             ],
           );
         },

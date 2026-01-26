@@ -9,13 +9,11 @@ import (
 
 func CreateAuthClient() (authpb.AuthServiceClient, error) {
 	authServiceUrl, err := env.GetAuthServiceURL()
-
 	if err != nil {
 		return nil, err
 	}
 
 	connection, err := grpc.NewClient(authServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
 	if err != nil {
 		return nil, err
 	}

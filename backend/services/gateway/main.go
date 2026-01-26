@@ -31,13 +31,18 @@ func main() {
 	}
 
 	authService, err := clients.CreateAuthClient()
-
 	if err != nil {
 		logging.Logger.Error("Failed to connect to Auth Service over gRPC.", zap.Error(err))
 	}
 
+	attachmentService, err := clients.CreateAttachmentClient()
+	if err != nil {
+		logging.Logger.Error("Failed to connect to Attachment Service over gRPC.", zap.Error(err))
+	}
+
 	graphConfig := graph.Config{Resolvers: &graph.Resolver{
-		AuthService: authService,
+		AuthService:       authService,
+		AttachmentService: attachmentService,
 	}}
 
 	server := handler.NewDefaultServer(graph.NewExecutableSchema(graphConfig))

@@ -1,4 +1,4 @@
-package rpcs
+package auth_rpcs
 
 import (
 	"context"
@@ -16,7 +16,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *AuthService) CreateSession(ctx context.Context, request *authpb.SessionRequest) (*authpb.Session, error) {
+func (s *AuthService) CreateSession(
+	ctx context.Context,
+	request *authpb.SessionRequest,
+) (*authpb.Session, error) {
 	existingSession, err := db.Redis.Get(ctx, request.Phone).Result()
 
 	if err != nil && err != redis.Nil {

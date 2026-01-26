@@ -1,12 +1,16 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
 import "package:hive_flutter/adapters.dart";
 import "package:sero/blocs/auth/auth_bloc.dart";
-import "package:sero/models/adapters/user_adapter.dart";
+import "package:sero/constants.dart";
+import "package:sero/models/user.dart";
 import "package:sero/router.dart";
 
 Future<void> main() async {
+  await dotenv.load(fileName: envFile);
+
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 

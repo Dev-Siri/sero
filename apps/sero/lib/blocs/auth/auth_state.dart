@@ -6,6 +6,12 @@ sealed class AuthState {}
 
 class AuthStateInitial extends AuthState {}
 
+class AuthStateError extends AuthState {
+  final String message;
+
+  AuthStateError({required this.message});
+}
+
 class AuthStateUnauthorized extends AuthState {}
 
 class AuthStateAuthorized extends AuthState {

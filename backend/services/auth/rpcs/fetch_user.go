@@ -1,4 +1,4 @@
-package rpcs
+package auth_rpcs
 
 import (
 	"context"
@@ -11,17 +11,22 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *AuthService) FetchUser(ctx context.Context, request *authpb.FetchUserRequest) (*authpb.User, error) {
+func (s *AuthService) FetchUser(
+	ctx context.Context,
+	request *authpb.FetchUserRequest,
+) (*authpb.User, error) {
 	row := db.Database.QueryRow(`
 		SELECT
-			user_id,
-			phone,
-			display_name,
-			created_at,
-			status_text,
-			picture_url
-		FROM Users
-		WHERE user_id = $1
+			u.user_id,
+			u.phone,
+			u.display_name,
+			u.created_at,
+			u.status_text,
+			COALESCE(a.processed_url, a.source_url) AS picture_url
+		FROM Users AS u
+		LEFT JOIN Attachments AS a
+		ON u.picture_url_attachment = a.attachment_id
+		WHERE u.user_id = $1
 		LIMIT 1;
 	`, request.UserId)
 

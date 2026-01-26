@@ -26,8 +26,10 @@ const (
 	AuthService_CompleteAuth_FullMethodName      = "/auth.AuthService/CompleteAuth"
 	AuthService_UpdateDisplayName_FullMethodName = "/auth.AuthService/UpdateDisplayName"
 	AuthService_UpdatePicture_FullMethodName     = "/auth.AuthService/UpdatePicture"
-	AuthService_UploadStatus_FullMethodName      = "/auth.AuthService/UploadStatus"
+	AuthService_UpdateStatus_FullMethodName      = "/auth.AuthService/UpdateStatus"
 	AuthService_FetchUser_FullMethodName         = "/auth.AuthService/FetchUser"
+	AuthService_UploadPublicKey_FullMethodName   = "/auth.AuthService/UploadPublicKey"
+	AuthService_RevokePublicKey_FullMethodName   = "/auth.AuthService/RevokePublicKey"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -40,8 +42,10 @@ type AuthServiceClient interface {
 	CompleteAuth(ctx context.Context, in *CompleteAuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	UpdateDisplayName(ctx context.Context, in *UpdateDisplayNameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UpdatePicture(ctx context.Context, in *UpdatePictureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	UploadStatus(ctx context.Context, in *UpdateStatusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdateStatus(ctx context.Context, in *UpdateStatusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	FetchUser(ctx context.Context, in *FetchUserRequest, opts ...grpc.CallOption) (*User, error)
+	UploadPublicKey(ctx context.Context, in *UploadPublicKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RevokePublicKey(ctx context.Context, in *RevokePublicKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type authServiceClient struct {
@@ -112,10 +116,10 @@ func (c *authServiceClient) UpdatePicture(ctx context.Context, in *UpdatePicture
 	return out, nil
 }
 
-func (c *authServiceClient) UploadStatus(ctx context.Context, in *UpdateStatusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *authServiceClient) UpdateStatus(ctx context.Context, in *UpdateStatusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, AuthService_UploadStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, AuthService_UpdateStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -132,6 +136,26 @@ func (c *authServiceClient) FetchUser(ctx context.Context, in *FetchUserRequest,
 	return out, nil
 }
 
+func (c *authServiceClient) UploadPublicKey(ctx context.Context, in *UploadPublicKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AuthService_UploadPublicKey_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) RevokePublicKey(ctx context.Context, in *RevokePublicKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AuthService_RevokePublicKey_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -142,8 +166,10 @@ type AuthServiceServer interface {
 	CompleteAuth(context.Context, *CompleteAuthRequest) (*AuthResponse, error)
 	UpdateDisplayName(context.Context, *UpdateDisplayNameRequest) (*emptypb.Empty, error)
 	UpdatePicture(context.Context, *UpdatePictureRequest) (*emptypb.Empty, error)
-	UploadStatus(context.Context, *UpdateStatusRequest) (*emptypb.Empty, error)
+	UpdateStatus(context.Context, *UpdateStatusRequest) (*emptypb.Empty, error)
 	FetchUser(context.Context, *FetchUserRequest) (*User, error)
+	UploadPublicKey(context.Context, *UploadPublicKeyRequest) (*emptypb.Empty, error)
+	RevokePublicKey(context.Context, *RevokePublicKeyRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -172,11 +198,17 @@ func (UnimplementedAuthServiceServer) UpdateDisplayName(context.Context, *Update
 func (UnimplementedAuthServiceServer) UpdatePicture(context.Context, *UpdatePictureRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdatePicture not implemented")
 }
-func (UnimplementedAuthServiceServer) UploadStatus(context.Context, *UpdateStatusRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method UploadStatus not implemented")
+func (UnimplementedAuthServiceServer) UpdateStatus(context.Context, *UpdateStatusRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateStatus not implemented")
 }
 func (UnimplementedAuthServiceServer) FetchUser(context.Context, *FetchUserRequest) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method FetchUser not implemented")
+}
+func (UnimplementedAuthServiceServer) UploadPublicKey(context.Context, *UploadPublicKeyRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method UploadPublicKey not implemented")
+}
+func (UnimplementedAuthServiceServer) RevokePublicKey(context.Context, *RevokePublicKeyRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method RevokePublicKey not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -307,20 +339,20 @@ func _AuthService_UpdatePicture_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_UploadStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthService_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateStatusRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).UploadStatus(ctx, in)
+		return srv.(AuthServiceServer).UpdateStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_UploadStatus_FullMethodName,
+		FullMethod: AuthService_UpdateStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).UploadStatus(ctx, req.(*UpdateStatusRequest))
+		return srv.(AuthServiceServer).UpdateStatus(ctx, req.(*UpdateStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -339,6 +371,42 @@ func _AuthService_FetchUser_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).FetchUser(ctx, req.(*FetchUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_UploadPublicKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadPublicKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).UploadPublicKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_UploadPublicKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).UploadPublicKey(ctx, req.(*UploadPublicKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_RevokePublicKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RevokePublicKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).RevokePublicKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_RevokePublicKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).RevokePublicKey(ctx, req.(*RevokePublicKeyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -375,12 +443,20 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_UpdatePicture_Handler,
 		},
 		{
-			MethodName: "UploadStatus",
-			Handler:    _AuthService_UploadStatus_Handler,
+			MethodName: "UpdateStatus",
+			Handler:    _AuthService_UpdateStatus_Handler,
 		},
 		{
 			MethodName: "FetchUser",
 			Handler:    _AuthService_FetchUser_Handler,
+		},
+		{
+			MethodName: "UploadPublicKey",
+			Handler:    _AuthService_UploadPublicKey_Handler,
+		},
+		{
+			MethodName: "RevokePublicKey",
+			Handler:    _AuthService_RevokePublicKey_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

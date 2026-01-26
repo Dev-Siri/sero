@@ -6,7 +6,7 @@ import (
 
 	authpb "github.com/Dev-Siri/sero/backend/proto/authpb"
 	"github.com/Dev-Siri/sero/backend/services/auth/db"
-	"github.com/Dev-Siri/sero/backend/services/auth/rpcs"
+	auth_rpcs "github.com/Dev-Siri/sero/backend/services/auth/rpcs"
 	"github.com/Dev-Siri/sero/backend/services/auth/sms"
 	shared_db "github.com/Dev-Siri/sero/backend/shared/db"
 	"github.com/Dev-Siri/sero/backend/shared/env"
@@ -52,7 +52,7 @@ func main() {
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(logging.GrpcLoggingInterceptor),
 	)
-	authpb.RegisterAuthServiceServer(grpcServer, &rpcs.AuthService{})
+	authpb.RegisterAuthServiceServer(grpcServer, &auth_rpcs.AuthService{})
 
 	logging.Logger.Info("AuthService listening on "+addr, zap.String("port", port))
 	if err := grpcServer.Serve(listener); err != nil {

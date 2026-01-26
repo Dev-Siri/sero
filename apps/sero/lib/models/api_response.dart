@@ -1,13 +1,18 @@
-sealed class ApiResponse<T> {}
+sealed class ApiResponse<T> {
+  const ApiResponse();
+}
 
 class ApiResponseSuccess<T> extends ApiResponse<T> {
   final T data;
 
-  ApiResponseSuccess({required this.data});
+  const ApiResponseSuccess({required this.data});
 }
 
 class ApiResponseError<T> extends ApiResponse<T> {
   final String message;
 
-  ApiResponseError({required this.message});
+  const ApiResponseError({required this.message});
+
+  @override
+  String toString() => "ApiResponseError(message: $message)";
 }

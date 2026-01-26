@@ -1,4 +1,4 @@
-package rpcs
+package auth_rpcs
 
 import (
 	"context"
@@ -12,7 +12,10 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *AuthService) UpdatePicture(ctx context.Context, request *authpb.UpdatePictureRequest) (*emptypb.Empty, error) {
+func (s *AuthService) UpdatePicture(
+	ctx context.Context,
+	request *authpb.UpdatePictureRequest,
+) (*emptypb.Empty, error) {
 	row := db.Database.QueryRow(`
 		SELECT COUNT(*) FROM Users
 		WHERE user_id = $1;
@@ -32,9 +35,9 @@ func (s *AuthService) UpdatePicture(ctx context.Context, request *authpb.UpdateP
 
 	_, err := db.Database.Exec(`
 		UPDATE Users
-		SET "picture_url" = $1
+		SET "picture_url_attachment" = $1
 		WHERE user_id = $2;
-	`, request.PictureUrl, request.UserId)
+	`, request.PictureUrlAttachmentId, request.UserId)
 
 	if err != nil {
 		logging.Logger.Error("Failed to update the picture URL of user.", zap.String("userId", request.UserId), zap.Error(err))

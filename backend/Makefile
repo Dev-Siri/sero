@@ -12,3 +12,6 @@ generate:
 	  mv $$dir/$${base}.pb.go $$out_dir/; \
 	  mv $$dir/$${base}_grpc.pb.go $$out_dir/; \
 	done
+
+gql:
+	cd services/gateway && go run github.com/99designs/gqlgen generate

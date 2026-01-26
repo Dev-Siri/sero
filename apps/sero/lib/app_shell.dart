@@ -17,29 +17,33 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
+  late final ValueNotifier<GraphQLClient> gqlClient;
+
   @override
   void initState() {
-    context.read<AuthBloc>().add(AuthAutoLoginUserEvent());
     super.initState();
+
+    gqlClient = ValueNotifier(createGqlClient(null));
+
+    context.read<AuthBloc>().add(
+      AuthAutoLoginUserEvent(gqlClient: gqlClient.value),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
+        gqlClient.value = createGqlClient(
+          state is AuthStateAuthorized ? state.authToken : null,
+        );
+
         if (state is! AuthStateAuthorized) {
           context.go("/login");
         }
       },
       builder: (context, state) {
-        final gqlClient = createGqlClient(
-          state is AuthStateAuthorized ? state.authToken : null,
-        );
-
-        return GraphQLProvider(
-          client: ValueNotifier(gqlClient),
-          child: widget.child,
-        );
+        return GraphQLProvider(client: gqlClient, child: widget.child);
       },
     );
   }

@@ -2,6 +2,7 @@ import "dart:io";
 
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import "package:intl_phone_field/country_picker_dialog.dart";
 import "package:intl_phone_field/intl_phone_field.dart";
 import "package:sero/widgets/logo.dart";
 
@@ -83,6 +84,19 @@ class _LoginWelcomeState extends State<LoginWelcome> {
             ),
             child: IntlPhoneField(
               keyboardType: TextInputType.phone,
+              pickerDialogStyle: PickerDialogStyle(
+                backgroundColor: Colors.white,
+                searchFieldCursorColor: Colors.black,
+                width: MediaQuery.sizeOf(context).width - 20,
+                countryNameStyle: const TextStyle(fontSize: 16),
+                searchFieldInputDecoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.black),
+                  prefixIconColor: Colors.black,
+                  prefixIcon: Icon(Icons.search),
+                  hintText: "Search for a country...",
+                ),
+              ),
               decoration: InputDecoration(
                 hintText: "Phone",
                 border: InputBorder.none,

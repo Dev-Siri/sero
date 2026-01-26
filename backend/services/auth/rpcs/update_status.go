@@ -1,4 +1,4 @@
-package rpcs
+package auth_rpcs
 
 import (
 	"context"
@@ -12,7 +12,10 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *AuthService) UpdateStatus(ctx context.Context, request *authpb.UpdateStatusRequest) (*emptypb.Empty, error) {
+func (s *AuthService) UpdateStatus(
+	ctx context.Context,
+	request *authpb.UpdateStatusRequest,
+) (*emptypb.Empty, error) {
 	row := db.Database.QueryRow(`
 		SELECT COUNT(*) FROM Users
 		WHERE user_id = $1;
@@ -32,7 +35,7 @@ func (s *AuthService) UpdateStatus(ctx context.Context, request *authpb.UpdateSt
 
 	_, err := db.Database.Exec(`
 		UPDATE Users
-		SET "status" = $1
+		SET "status_text" = $1
 		WHERE user_id = $2;
 	`, request.Status, request.UserId)
 

@@ -7,6 +7,7 @@ package graph
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Dev-Siri/sero/backend/proto/authpb"
 	"github.com/Dev-Siri/sero/backend/services/gateway/graph/model"
@@ -20,7 +21,6 @@ func (r *mutationResolver) CreateSession(ctx context.Context, phone string) (*mo
 	session, err := r.AuthService.CreateSession(ctx, &authpb.SessionRequest{
 		Phone: phone,
 	})
-
 	if err != nil {
 		logging.Logger.Error("resolver 'CreateSession' errored.", zap.Error(err))
 		return nil, err
@@ -35,7 +35,6 @@ func (r *mutationResolver) VerifyOtp(ctx context.Context, otp model.OtpInput) (m
 		SessionId: otp.SessionID,
 		Otp:       otp.Otp,
 	})
-
 	if err != nil {
 		logging.Logger.Error("resolver 'VerifyOtp' errored.", zap.Error(err))
 		return "", err
@@ -61,7 +60,6 @@ func (r *mutationResolver) ResendOtp(ctx context.Context, resendInfo model.Resen
 		SessionId: resendInfo.SessionID,
 		Phone:     resendInfo.Phone,
 	})
-
 	if err != nil {
 		logging.Logger.Error("resolver 'ResendOtp' errored.", zap.Error(err))
 		return nil, err
@@ -76,7 +74,6 @@ func (r *mutationResolver) CompleteAuth(ctx context.Context, authInfo model.Comp
 		SessionId: authInfo.SessionID,
 		Phone:     authInfo.Phone,
 	})
-
 	if err != nil {
 		logging.Logger.Error("resolver 'CompleteAuth' errored.", zap.Error(err))
 		return nil, err
@@ -100,14 +97,93 @@ func (r *mutationResolver) CompleteAuth(ctx context.Context, authInfo model.Comp
 // UpdateDisplayName is the resolver for the updateDisplayName field.
 func (r *mutationResolver) UpdateDisplayName(ctx context.Context, newName string) (*bool, error) {
 	user := middleware.AuthFromContext(ctx)
+	if user == nil {
+		return nil, errors.New("unauthorized")
+	}
 
 	_, err := r.AuthService.UpdateDisplayName(ctx, &authpb.UpdateDisplayNameRequest{
 		UserId:      user.UserId,
 		DisplayName: newName,
 	})
-
 	if err != nil {
 		logging.Logger.Error("resolver 'UpdateDisplayName' errored.", zap.Error(err))
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+// UpdateStatus is the resolver for the updateStatus field.
+func (r *mutationResolver) UpdateStatus(ctx context.Context, newStatus string) (*bool, error) {
+	user := middleware.AuthFromContext(ctx)
+	if user == nil {
+		return nil, errors.New("unauthorized")
+	}
+
+	_, err := r.AuthService.UpdateStatus(ctx, &authpb.UpdateStatusRequest{
+		UserId: user.UserId,
+		Status: newStatus,
+	})
+	if err != nil {
+		logging.Logger.Error("resolver 'UpdateStatus' errored.", zap.Error(err))
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+// UpdatePictureURL is the resolver for the updatePictureUrl field.
+func (r *mutationResolver) UpdatePictureURL(ctx context.Context, newPictureAttachmentID string) (*bool, error) {
+	user := middleware.AuthFromContext(ctx)
+	if user == nil {
+		return nil, errors.New("unauthorized")
+	}
+
+	_, err := r.AuthService.UpdatePicture(ctx, &authpb.UpdatePictureRequest{
+		UserId:                 user.UserId,
+		PictureUrlAttachmentId: newPictureAttachmentID,
+	})
+	if err != nil {
+		logging.Logger.Error("resolver 'UpdatePictureURL' errored.", zap.Error(err))
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+// UploadPublicKey is the resolver for the uploadPublicKey field.
+func (r *mutationResolver) UploadPublicKey(ctx context.Context, publicKey model.PublicKeyInput) (*bool, error) {
+	user, err := middleware.ParseAuthToken(publicKey.UserToken)
+	if err != nil {
+		logging.Logger.Error("Failed to parse authToken.", zap.Error(err))
+		return nil, err
+	}
+
+	_, err = r.AuthService.UploadPublicKey(ctx, &authpb.UploadPublicKeyRequest{
+		UserId:    user.UserId,
+		Algorithm: publicKey.Algorithm,
+		PublicKey: publicKey.PublicKey,
+	})
+	if err != nil {
+		logging.Logger.Error("resolver 'UploadPublicKey' errored.", zap.Error(err))
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+// RevokePublicKey is the resolver for the revokePublicKey field.
+func (r *mutationResolver) RevokePublicKey(ctx context.Context) (*bool, error) {
+	user := middleware.AuthFromContext(ctx)
+	if user == nil {
+		return nil, errors.New("unauthorized")
+	}
+
+	_, err := r.AuthService.RevokePublicKey(ctx, &authpb.RevokePublicKeyRequest{
+		UserId: user.UserId,
+	})
+	if err != nil {
+		logging.Logger.Error("resolver 'RevokePublicKey' errored.", zap.Error(err))
 		return nil, err
 	}
 
@@ -119,8 +195,8 @@ func (r *queryResolver) GetUser(ctx context.Context, userID string) (*model.User
 	user, err := r.AuthService.FetchUser(ctx, &authpb.FetchUserRequest{
 		UserId: userID,
 	})
-
 	if err != nil {
+		logging.Logger.Error("resolver 'GetUser' errored.", zap.Error(err))
 		return nil, err
 	}
 
@@ -133,12 +209,3 @@ func (r *queryResolver) GetUser(ctx context.Context, userID string) (*model.User
 		PictureURL:  user.PictureUrl,
 	}, nil
 }
-
-// Mutation returns MutationResolver implementation.
-func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
-
-// Query returns QueryResolver implementation.
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
-
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }

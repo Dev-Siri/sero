@@ -1,0 +1,36 @@
+enum AttachmentKind {
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
+input FileInfo {
+  name: String!
+  size: Int!
+  mimeType: String!
+  kind: AttachmentKind!
+}
+
+input PresignedFileInfo {
+  name: String!
+  mimeType: String!
+  fileKey: String!
+  kind: AttachmentKind!
+}
+
+type SignedUrlInfo {
+  uploadUri: String!
+  fileKey: String!
+}
+
+type AttachmentInfo {
+  attachmentId: String!
+}
+
+extend type Query {
+  getSignedUrl(fileInfo: FileInfo!): SignedUrlInfo!
+}
+
+extend type Mutation {
+  uploadFile(presignedFileInfo: PresignedFileInfo!): AttachmentInfo!
+}

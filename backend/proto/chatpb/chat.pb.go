@@ -25,7 +25,7 @@ var File_proto_chat_proto protoreflect.FileDescriptor
 const file_proto_chat_proto_rawDesc = "" +
 	"\n" +
 	"\x10proto/chat.proto\x12\x04chat2\r\n" +
-	"\vChatServiceB,Z*github.com/Dev-Siri/sero/proto/chat;chatpbb\x06proto3"
+	"\vChatServiceB4Z2github.com/Dev-Siri/sero/backend/proto/chat;chatpbb\x06proto3"
 
 var file_proto_chat_proto_goTypes = []any{}
 var file_proto_chat_proto_depIdxs = []int32{

@@ -5,7 +5,7 @@ class AuthenticatedUser {
   final String userId;
   final AuthType authType;
 
-  AuthenticatedUser({
+  const AuthenticatedUser({
     required this.token,
     required this.userId,
     required this.authType,

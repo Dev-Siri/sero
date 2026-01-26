@@ -1,4 +1,4 @@
-package rpcs
+package auth_rpcs
 
 import "github.com/Dev-Siri/sero/backend/proto/authpb"
 
