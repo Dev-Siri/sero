@@ -76,7 +76,7 @@ class AttachmentRepo {
       final response = await request.send();
 
       if (response.statusCode != 200 && response.statusCode != 204) {
-        return const ApiResponseError(message: "Upload failed");
+        return const ApiResponseError(message: "Upload failed.");
       }
 
       const mutation = r"""
@@ -113,7 +113,6 @@ class AttachmentRepo {
 
       return ApiResponseSuccess(data: attachmentId as String);
     } catch (err) {
-      print(err);
       return ApiResponseError(message: err.toString());
     }
   }

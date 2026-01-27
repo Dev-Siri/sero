@@ -43,7 +43,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
 
     if (signedUriInfo is! ApiResponseSuccess<SignedUrlInfo>) {
-      _showErrorSnack();
+      _showErrorSnack(
+        (signedUriInfo as ApiResponseError<SignedUrlInfo>).message,
+      );
       setState(() => _isLoading = false);
       return;
     }
@@ -56,7 +58,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
 
     if (uploadResponse is! ApiResponseSuccess<String>) {
-      _showErrorSnack();
+      _showErrorSnack((uploadResponse as ApiResponseError<String>).message);
       setState(() => _isLoading = false);
       return;
     }
@@ -67,7 +69,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
 
     if (finalPictureUpdateResponse is ApiResponseError<void>) {
-      _showErrorSnack();
+      _showErrorSnack(finalPictureUpdateResponse.message);
       setState(() => _isLoading = false);
       return;
     }
@@ -77,12 +79,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() => _isLoading = false);
   }
 
-  void _showErrorSnack() => ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text("Image upload failed."),
-      backgroundColor: Colors.red,
-    ),
-  );
+  void _showErrorSnack(String errorMessage) =>
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+      );
 
   @override
   Widget build(BuildContext context) {

@@ -6,6 +6,7 @@ import (
 	"github.com/Dev-Siri/sero/backend/proto/attachmentpb"
 	"github.com/Dev-Siri/sero/backend/services/attachment/api"
 	"github.com/Dev-Siri/sero/backend/services/attachment/models"
+	"github.com/Dev-Siri/sero/backend/services/attachment/utils"
 	"github.com/Dev-Siri/sero/backend/shared/logging"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -16,6 +17,11 @@ func (a *AttachmentService) GetSignedURI(
 	ctx context.Context,
 	request *attachmentpb.GetSignedURIRequest,
 ) (*attachmentpb.GetSignedURIResponse, error) {
+	if !utils.IsFileSizeAllowed(request.Size, request.Kind) {
+		logging.Logger.Warn("File upload rejected: fileSize too large for specified kind.")
+		return nil, status.Error(codes.Internal, "File upload rejected: fileSize too large for specified kind.")
+	}
+
 	response, err := api.GetPresignedURL(models.UploadThingRequestFile{
 		FileName: request.Name,
 		FileSize: request.Size,

@@ -35,7 +35,7 @@ func (a *AttachmentService) UploadFile(
 	}
 
 	if request.Kind == attachmentpb.AttachmentKind_ATTACHMENT_KIND_IMAGE {
-		go bg.CompressFile(attachmentId)
+		go bg.ProcessFile(request.Name, fileUrl, attachmentId)
 	}
 
 	return &attachmentpb.UploadFileResponse{
