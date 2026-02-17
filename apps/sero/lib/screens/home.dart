@@ -17,6 +17,11 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       body: const SafeArea(child: Text("Hello, World!")),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        onPressed: () => {},
+        child: const Icon(Icons.plus_one),
+      ),
     );
   }
 }
