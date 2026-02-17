@@ -7,6 +7,7 @@
 package authpb
 
 import (
+	commonpb "github.com/Dev-Siri/sero/backend/proto/commonpb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -665,90 +666,6 @@ func (x *FetchUserRequest) GetUserId() string {
 	return ""
 }
 
-type User struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Phone         string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	DisplayName   *string                `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
-	StatusText    *string                `protobuf:"bytes,5,opt,name=status_text,json=statusText,proto3,oneof" json:"status_text,omitempty"`
-	PictureUrl    *string                `protobuf:"bytes,6,opt,name=picture_url,json=pictureUrl,proto3,oneof" json:"picture_url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *User) Reset() {
-	*x = User{}
-	mi := &file_proto_auth_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *User) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*User) ProtoMessage() {}
-
-func (x *User) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_auth_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use User.ProtoReflect.Descriptor instead.
-func (*User) Descriptor() ([]byte, []int) {
-	return file_proto_auth_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *User) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *User) GetPhone() string {
-	if x != nil {
-		return x.Phone
-	}
-	return ""
-}
-
-func (x *User) GetCreatedAt() string {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return ""
-}
-
-func (x *User) GetDisplayName() string {
-	if x != nil && x.DisplayName != nil {
-		return *x.DisplayName
-	}
-	return ""
-}
-
-func (x *User) GetStatusText() string {
-	if x != nil && x.StatusText != nil {
-		return *x.StatusText
-	}
-	return ""
-}
-
-func (x *User) GetPictureUrl() string {
-	if x != nil && x.PictureUrl != nil {
-		return *x.PictureUrl
-	}
-	return ""
-}
-
 type UploadPublicKeyRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -760,7 +677,7 @@ type UploadPublicKeyRequest struct {
 
 func (x *UploadPublicKeyRequest) Reset() {
 	*x = UploadPublicKeyRequest{}
-	mi := &file_proto_auth_proto_msgTypes[12]
+	mi := &file_proto_auth_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +689,7 @@ func (x *UploadPublicKeyRequest) String() string {
 func (*UploadPublicKeyRequest) ProtoMessage() {}
 
 func (x *UploadPublicKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_auth_proto_msgTypes[12]
+	mi := &file_proto_auth_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +702,7 @@ func (x *UploadPublicKeyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadPublicKeyRequest.ProtoReflect.Descriptor instead.
 func (*UploadPublicKeyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_auth_proto_rawDescGZIP(), []int{12}
+	return file_proto_auth_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UploadPublicKeyRequest) GetUserId() string {
@@ -818,7 +735,7 @@ type RevokePublicKeyRequest struct {
 
 func (x *RevokePublicKeyRequest) Reset() {
 	*x = RevokePublicKeyRequest{}
-	mi := &file_proto_auth_proto_msgTypes[13]
+	mi := &file_proto_auth_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -830,7 +747,7 @@ func (x *RevokePublicKeyRequest) String() string {
 func (*RevokePublicKeyRequest) ProtoMessage() {}
 
 func (x *RevokePublicKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_auth_proto_msgTypes[13]
+	mi := &file_proto_auth_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -843,7 +760,7 @@ func (x *RevokePublicKeyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokePublicKeyRequest.ProtoReflect.Descriptor instead.
 func (*RevokePublicKeyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_auth_proto_rawDescGZIP(), []int{13}
+	return file_proto_auth_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *RevokePublicKeyRequest) GetUserId() string {
@@ -857,7 +774,7 @@ var File_proto_auth_proto protoreflect.FileDescriptor
 
 const file_proto_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x10proto/auth.proto\x12\x04auth\x1a\x1bgoogle/protobuf/empty.proto\"(\n" +
+	"\x10proto/auth.proto\x12\x04auth\x1a\x12proto/common.proto\x1a\x1bgoogle/protobuf/empty.proto\"(\n" +
 	"\aSession\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x01 \x01(\tR\tsessionId\"G\n" +
@@ -899,27 +816,14 @@ const file_proto_auth_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\"+\n" +
 	"\x10FetchUserRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\"\xf9\x01\n" +
-	"\x04User\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
-	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x1d\n" +
-	"\n" +
-	"created_at\x18\x03 \x01(\tR\tcreatedAt\x12&\n" +
-	"\fdisplay_name\x18\x04 \x01(\tH\x00R\vdisplayName\x88\x01\x01\x12$\n" +
-	"\vstatus_text\x18\x05 \x01(\tH\x01R\n" +
-	"statusText\x88\x01\x01\x12$\n" +
-	"\vpicture_url\x18\x06 \x01(\tH\x02R\n" +
-	"pictureUrl\x88\x01\x01B\x0f\n" +
-	"\r_display_nameB\x0e\n" +
-	"\f_status_textB\x0e\n" +
-	"\f_picture_url\"n\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"n\n" +
 	"\x16UploadPublicKeyRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1c\n" +
 	"\talgorithm\x18\x02 \x01(\tR\talgorithm\x12\x1d\n" +
 	"\n" +
 	"public_key\x18\x03 \x01(\tR\tpublicKey\"1\n" +
 	"\x16RevokePublicKeyRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId2\x89\x05\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId2\x8b\x05\n" +
 	"\vAuthService\x124\n" +
 	"\rCreateSession\x12\x14.auth.SessionRequest\x1a\r.auth.Session\x120\n" +
 	"\tVerifyOtp\x12\x10.auth.OtpRequest\x1a\x11.auth.OtpResponse\x12;\n" +
@@ -927,9 +831,8 @@ const file_proto_auth_proto_rawDesc = "" +
 	"\fCompleteAuth\x12\x19.auth.CompleteAuthRequest\x1a\x12.auth.AuthResponse\x12K\n" +
 	"\x11UpdateDisplayName\x12\x1e.auth.UpdateDisplayNameRequest\x1a\x16.google.protobuf.Empty\x12C\n" +
 	"\rUpdatePicture\x12\x1a.auth.UpdatePictureRequest\x1a\x16.google.protobuf.Empty\x12A\n" +
-	"\fUpdateStatus\x12\x19.auth.UpdateStatusRequest\x1a\x16.google.protobuf.Empty\x12/\n" +
-	"\tFetchUser\x12\x16.auth.FetchUserRequest\x1a\n" +
-	".auth.User\x12G\n" +
+	"\fUpdateStatus\x12\x19.auth.UpdateStatusRequest\x1a\x16.google.protobuf.Empty\x121\n" +
+	"\tFetchUser\x12\x16.auth.FetchUserRequest\x1a\f.common.User\x12G\n" +
 	"\x0fUploadPublicKey\x12\x1c.auth.UploadPublicKeyRequest\x1a\x16.google.protobuf.Empty\x12G\n" +
 	"\x0fRevokePublicKey\x12\x1c.auth.RevokePublicKeyRequest\x1a\x16.google.protobuf.EmptyB4Z2github.com/Dev-Siri/sero/backend/proto/auth;authpbb\x06proto3"
 
@@ -946,7 +849,7 @@ func file_proto_auth_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_auth_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_proto_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_proto_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_proto_auth_proto_goTypes = []any{
 	(OtpResponse_OtpValidityStatus)(0), // 0: auth.OtpResponse.OtpValidityStatus
 	(AuthResponse_AuthType)(0),         // 1: auth.AuthResponse.AuthType
@@ -961,10 +864,10 @@ var file_proto_auth_proto_goTypes = []any{
 	(*UpdatePictureRequest)(nil),       // 10: auth.UpdatePictureRequest
 	(*UpdateStatusRequest)(nil),        // 11: auth.UpdateStatusRequest
 	(*FetchUserRequest)(nil),           // 12: auth.FetchUserRequest
-	(*User)(nil),                       // 13: auth.User
-	(*UploadPublicKeyRequest)(nil),     // 14: auth.UploadPublicKeyRequest
-	(*RevokePublicKeyRequest)(nil),     // 15: auth.RevokePublicKeyRequest
-	(*emptypb.Empty)(nil),              // 16: google.protobuf.Empty
+	(*UploadPublicKeyRequest)(nil),     // 13: auth.UploadPublicKeyRequest
+	(*RevokePublicKeyRequest)(nil),     // 14: auth.RevokePublicKeyRequest
+	(*emptypb.Empty)(nil),              // 15: google.protobuf.Empty
+	(*commonpb.User)(nil),              // 16: common.User
 }
 var file_proto_auth_proto_depIdxs = []int32{
 	0,  // 0: auth.OtpResponse.otp_validity_status:type_name -> auth.OtpResponse.OtpValidityStatus
@@ -977,18 +880,18 @@ var file_proto_auth_proto_depIdxs = []int32{
 	10, // 7: auth.AuthService.UpdatePicture:input_type -> auth.UpdatePictureRequest
 	11, // 8: auth.AuthService.UpdateStatus:input_type -> auth.UpdateStatusRequest
 	12, // 9: auth.AuthService.FetchUser:input_type -> auth.FetchUserRequest
-	14, // 10: auth.AuthService.UploadPublicKey:input_type -> auth.UploadPublicKeyRequest
-	15, // 11: auth.AuthService.RevokePublicKey:input_type -> auth.RevokePublicKeyRequest
+	13, // 10: auth.AuthService.UploadPublicKey:input_type -> auth.UploadPublicKeyRequest
+	14, // 11: auth.AuthService.RevokePublicKey:input_type -> auth.RevokePublicKeyRequest
 	2,  // 12: auth.AuthService.CreateSession:output_type -> auth.Session
 	6,  // 13: auth.AuthService.VerifyOtp:output_type -> auth.OtpResponse
-	16, // 14: auth.AuthService.ResendOtp:output_type -> google.protobuf.Empty
+	15, // 14: auth.AuthService.ResendOtp:output_type -> google.protobuf.Empty
 	8,  // 15: auth.AuthService.CompleteAuth:output_type -> auth.AuthResponse
-	16, // 16: auth.AuthService.UpdateDisplayName:output_type -> google.protobuf.Empty
-	16, // 17: auth.AuthService.UpdatePicture:output_type -> google.protobuf.Empty
-	16, // 18: auth.AuthService.UpdateStatus:output_type -> google.protobuf.Empty
-	13, // 19: auth.AuthService.FetchUser:output_type -> auth.User
-	16, // 20: auth.AuthService.UploadPublicKey:output_type -> google.protobuf.Empty
-	16, // 21: auth.AuthService.RevokePublicKey:output_type -> google.protobuf.Empty
+	15, // 16: auth.AuthService.UpdateDisplayName:output_type -> google.protobuf.Empty
+	15, // 17: auth.AuthService.UpdatePicture:output_type -> google.protobuf.Empty
+	15, // 18: auth.AuthService.UpdateStatus:output_type -> google.protobuf.Empty
+	16, // 19: auth.AuthService.FetchUser:output_type -> common.User
+	15, // 20: auth.AuthService.UploadPublicKey:output_type -> google.protobuf.Empty
+	15, // 21: auth.AuthService.RevokePublicKey:output_type -> google.protobuf.Empty
 	12, // [12:22] is the sub-list for method output_type
 	2,  // [2:12] is the sub-list for method input_type
 	2,  // [2:2] is the sub-list for extension type_name
@@ -1001,14 +904,13 @@ func file_proto_auth_proto_init() {
 	if File_proto_auth_proto != nil {
 		return
 	}
-	file_proto_auth_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_auth_proto_rawDesc), len(file_proto_auth_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   14,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

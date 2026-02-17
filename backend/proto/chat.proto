@@ -3,5 +3,34 @@ package chat;
 
 option go_package = "github.com/Dev-Siri/sero/backend/proto/chat;chatpb";
 
+import "proto/common.proto";
+
 service ChatService {
+  rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse);
+  rpc GetUserChatRooms(GetUserChatRoomsRequest) returns (GetUserChatRoomsResponse);
+}
+
+message ChatRoom {
+  string room_id = 1;
+  string created_at = 2;
+  common.User sender = 3;
+  common.User receiver = 4;
+  bool is_user_sender = 5;
+}
+
+message GetUserChatRoomsRequest {
+  string user_id = 1;
+}
+
+message GetUserChatRoomsResponse {
+  repeated ChatRoom chat_rooms = 1;
+}
+
+message CreateRoomRequest {
+  string sender_id = 1;
+  string receiver_id = 2;
+}
+
+message CreateRoomResponse {
+  string room_id = 1;
 }

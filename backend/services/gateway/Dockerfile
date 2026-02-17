@@ -8,6 +8,7 @@ RUN go mod download
 
 COPY . .
 
+ENV CGO_ENABLED=0
 RUN go build -v -trimpath -ldflags=-s -ldflags=-w -buildvcs=false -o /app/bin/gateway ./services/gateway
 
 FROM alpine:latest

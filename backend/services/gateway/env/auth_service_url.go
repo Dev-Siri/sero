@@ -6,11 +6,10 @@ import (
 )
 
 func GetAuthServiceURL() (string, error) {
-	authServiceUrl := os.Getenv("AUTH_SERVICE_URL")
-
-	if authServiceUrl == "" {
+	authServiceURL := os.Getenv("AUTH_SERVICE_URL")
+	if authServiceURL == "" {
 		return "", errors.New("environment 'AUTH_SERVICE_URL' variable not set")
 	}
 
-	return authServiceUrl, nil
+	return authServiceURL, nil
 }

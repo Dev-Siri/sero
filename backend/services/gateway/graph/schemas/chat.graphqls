@@ -1,0 +1,23 @@
+type ChatRoom {
+  roomId: String!
+  createdAt: String!
+  sender: User!
+  receiver: User!
+}
+
+input RoomMembers {
+  senderId: String!
+  receiverId: String!
+}
+
+type RoomNavInfo {
+  roomId: String!
+}
+
+extend type Query {
+  getUserChatRooms(userId: String!): [ChatRoom!]!
+}
+
+extend type Mutation {
+  createRoom(members: RoomMembers!): RoomNavInfo!
+}

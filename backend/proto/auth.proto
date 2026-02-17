@@ -3,6 +3,7 @@ package auth;
 
 option go_package = "github.com/Dev-Siri/sero/backend/proto/auth;authpb";
 
+import "proto/common.proto";
 import "google/protobuf/empty.proto";
 
 service AuthService {
@@ -13,7 +14,7 @@ service AuthService {
   rpc UpdateDisplayName(UpdateDisplayNameRequest) returns (google.protobuf.Empty);
   rpc UpdatePicture(UpdatePictureRequest) returns (google.protobuf.Empty);
   rpc UpdateStatus(UpdateStatusRequest) returns (google.protobuf.Empty);
-  rpc FetchUser(FetchUserRequest) returns (User);
+  rpc FetchUser(FetchUserRequest) returns (common.User);
   rpc UploadPublicKey(UploadPublicKeyRequest) returns (google.protobuf.Empty);
   rpc RevokePublicKey(RevokePublicKeyRequest) returns (google.protobuf.Empty);
 }
@@ -79,15 +80,6 @@ message UpdateStatusRequest {
 
 message FetchUserRequest {
   string user_id = 1;
-}
-
-message User {
-  string user_id = 1;
-  string phone = 2;
-  string created_at = 3;
-  optional string display_name = 4;
-  optional string status_text = 5;
-  optional string picture_url = 6;
 }
 
 message UploadPublicKeyRequest {

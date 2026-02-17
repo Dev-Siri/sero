@@ -28,11 +28,13 @@ type MutationResolver interface {
 	UpdatePictureURL(ctx context.Context, newPictureAttachmentID string) (*bool, error)
 	UploadPublicKey(ctx context.Context, publicKey model.PublicKeyInput) (*bool, error)
 	RevokePublicKey(ctx context.Context) (*bool, error)
+	CreateRoom(ctx context.Context, members model.RoomMembers) (*model.RoomNavInfo, error)
 }
 type QueryResolver interface {
 	Empty(ctx context.Context) (*bool, error)
 	GetSignedURL(ctx context.Context, fileInfo model.FileInfo) (*model.SignedURLInfo, error)
 	GetUser(ctx context.Context, userID string) (*model.User, error)
+	GetUserChatRooms(ctx context.Context, userID string) ([]*model.ChatRoom, error)
 }
 
 // endregion ************************** generated!.gotpl **************************
@@ -47,6 +49,17 @@ func (ec *executionContext) field_Mutation_completeAuth_args(ctx context.Context
 		return nil, err
 	}
 	args["authInfo"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createRoom_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "members", ec.unmarshalNRoomMembers2githubᚗcomᚋDevᚑSiriᚋseroᚋbackendᚋservicesᚋgatewayᚋgraphᚋmodelᚐRoomMembers)
+	if err != nil {
+		return nil, err
+	}
+	args["members"] = arg0
 	return args, nil
 }
 
@@ -157,6 +170,17 @@ func (ec *executionContext) field_Query_getSignedUrl_args(ctx context.Context, r
 		return nil, err
 	}
 	args["fileInfo"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getUserChatRooms_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "userId", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
+	}
+	args["userId"] = arg0
 	return args, nil
 }
 
@@ -622,6 +646,51 @@ func (ec *executionContext) fieldContext_Mutation_revokePublicKey(_ context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createRoom(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createRoom,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateRoom(ctx, fc.Args["members"].(model.RoomMembers))
+		},
+		nil,
+		ec.marshalNRoomNavInfo2ᚖgithubᚗcomᚋDevᚑSiriᚋseroᚋbackendᚋservicesᚋgatewayᚋgraphᚋmodelᚐRoomNavInfo,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createRoom(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "roomId":
+				return ec.fieldContext_RoomNavInfo_roomId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RoomNavInfo", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createRoom_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query__empty(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -747,6 +816,57 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getUserChatRooms(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_getUserChatRooms,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().GetUserChatRooms(ctx, fc.Args["userId"].(string))
+		},
+		nil,
+		ec.marshalNChatRoom2ᚕᚖgithubᚗcomᚋDevᚑSiriᚋseroᚋbackendᚋservicesᚋgatewayᚋgraphᚋmodelᚐChatRoomᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_getUserChatRooms(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "roomId":
+				return ec.fieldContext_ChatRoom_roomId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_ChatRoom_createdAt(ctx, field)
+			case "sender":
+				return ec.fieldContext_ChatRoom_sender(ctx, field)
+			case "receiver":
+				return ec.fieldContext_ChatRoom_receiver(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ChatRoom", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getUserChatRooms_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -948,6 +1068,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_revokePublicKey(ctx, field)
 			})
+		case "createRoom":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createRoom(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1041,6 +1168,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getUser(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getUserChatRooms":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getUserChatRooms(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

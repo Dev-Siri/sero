@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS Rooms(
+  room_id CHAR(36) PRIMARY KEY,
+  sender_id CHAR(36) NOT NULL,
+  receiver_id CHAR(36) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

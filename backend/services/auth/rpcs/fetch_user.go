@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Dev-Siri/sero/backend/proto/authpb"
+	"github.com/Dev-Siri/sero/backend/proto/commonpb"
 	"github.com/Dev-Siri/sero/backend/shared/db"
 	"github.com/Dev-Siri/sero/backend/shared/logging"
 	"go.uber.org/zap"
@@ -14,7 +15,7 @@ import (
 func (s *AuthService) FetchUser(
 	ctx context.Context,
 	request *authpb.FetchUserRequest,
-) (*authpb.User, error) {
+) (*commonpb.User, error) {
 	row := db.Database.QueryRow(`
 		SELECT
 			u.user_id,
@@ -30,7 +31,7 @@ func (s *AuthService) FetchUser(
 		LIMIT 1;
 	`, request.UserId)
 
-	var user authpb.User
+	var user commonpb.User
 
 	if err := row.Scan(
 		&user.UserId,

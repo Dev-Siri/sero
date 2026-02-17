@@ -8,12 +8,12 @@ import (
 )
 
 func CreateAttachmentClient() (attachmentpb.AttachmentServiceClient, error) {
-	attachmentServiceUrl, err := env.GetAttachmentServiceUrl()
+	attachmentServiceURL, err := env.GetAttachmentServiceURL()
 	if err != nil {
 		return nil, err
 	}
 
-	connection, err := grpc.NewClient(attachmentServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	connection, err := grpc.NewClient(attachmentServiceURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}

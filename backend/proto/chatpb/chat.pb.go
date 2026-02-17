@@ -7,9 +7,11 @@
 package chatpb
 
 import (
+	commonpb "github.com/Dev-Siri/sero/backend/proto/commonpb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -20,20 +22,328 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ChatRoom struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoomId        string                 `protobuf:"bytes,1,opt,name=room_id,json=roomId,proto3" json:"room_id,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Sender        *commonpb.User         `protobuf:"bytes,3,opt,name=sender,proto3" json:"sender,omitempty"`
+	Receiver      *commonpb.User         `protobuf:"bytes,4,opt,name=receiver,proto3" json:"receiver,omitempty"`
+	IsUserSender  bool                   `protobuf:"varint,5,opt,name=is_user_sender,json=isUserSender,proto3" json:"is_user_sender,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatRoom) Reset() {
+	*x = ChatRoom{}
+	mi := &file_proto_chat_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatRoom) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatRoom) ProtoMessage() {}
+
+func (x *ChatRoom) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatRoom.ProtoReflect.Descriptor instead.
+func (*ChatRoom) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ChatRoom) GetRoomId() string {
+	if x != nil {
+		return x.RoomId
+	}
+	return ""
+}
+
+func (x *ChatRoom) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ChatRoom) GetSender() *commonpb.User {
+	if x != nil {
+		return x.Sender
+	}
+	return nil
+}
+
+func (x *ChatRoom) GetReceiver() *commonpb.User {
+	if x != nil {
+		return x.Receiver
+	}
+	return nil
+}
+
+func (x *ChatRoom) GetIsUserSender() bool {
+	if x != nil {
+		return x.IsUserSender
+	}
+	return false
+}
+
+type GetUserChatRoomsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserChatRoomsRequest) Reset() {
+	*x = GetUserChatRoomsRequest{}
+	mi := &file_proto_chat_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserChatRoomsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserChatRoomsRequest) ProtoMessage() {}
+
+func (x *GetUserChatRoomsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserChatRoomsRequest.ProtoReflect.Descriptor instead.
+func (*GetUserChatRoomsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetUserChatRoomsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetUserChatRoomsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ChatRooms     []*ChatRoom            `protobuf:"bytes,1,rep,name=chat_rooms,json=chatRooms,proto3" json:"chat_rooms,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserChatRoomsResponse) Reset() {
+	*x = GetUserChatRoomsResponse{}
+	mi := &file_proto_chat_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserChatRoomsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserChatRoomsResponse) ProtoMessage() {}
+
+func (x *GetUserChatRoomsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserChatRoomsResponse.ProtoReflect.Descriptor instead.
+func (*GetUserChatRoomsResponse) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetUserChatRoomsResponse) GetChatRooms() []*ChatRoom {
+	if x != nil {
+		return x.ChatRooms
+	}
+	return nil
+}
+
+type CreateRoomRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SenderId      string                 `protobuf:"bytes,1,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
+	ReceiverId    string                 `protobuf:"bytes,2,opt,name=receiver_id,json=receiverId,proto3" json:"receiver_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRoomRequest) Reset() {
+	*x = CreateRoomRequest{}
+	mi := &file_proto_chat_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRoomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoomRequest) ProtoMessage() {}
+
+func (x *CreateRoomRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoomRequest.ProtoReflect.Descriptor instead.
+func (*CreateRoomRequest) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateRoomRequest) GetSenderId() string {
+	if x != nil {
+		return x.SenderId
+	}
+	return ""
+}
+
+func (x *CreateRoomRequest) GetReceiverId() string {
+	if x != nil {
+		return x.ReceiverId
+	}
+	return ""
+}
+
+type CreateRoomResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoomId        string                 `protobuf:"bytes,1,opt,name=room_id,json=roomId,proto3" json:"room_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRoomResponse) Reset() {
+	*x = CreateRoomResponse{}
+	mi := &file_proto_chat_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRoomResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoomResponse) ProtoMessage() {}
+
+func (x *CreateRoomResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoomResponse.ProtoReflect.Descriptor instead.
+func (*CreateRoomResponse) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreateRoomResponse) GetRoomId() string {
+	if x != nil {
+		return x.RoomId
+	}
+	return ""
+}
+
 var File_proto_chat_proto protoreflect.FileDescriptor
 
 const file_proto_chat_proto_rawDesc = "" +
 	"\n" +
-	"\x10proto/chat.proto\x12\x04chat2\r\n" +
-	"\vChatServiceB4Z2github.com/Dev-Siri/sero/backend/proto/chat;chatpbb\x06proto3"
+	"\x10proto/chat.proto\x12\x04chat\x1a\x12proto/common.proto\"\xb8\x01\n" +
+	"\bChatRoom\x12\x17\n" +
+	"\aroom_id\x18\x01 \x01(\tR\x06roomId\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\tR\tcreatedAt\x12$\n" +
+	"\x06sender\x18\x03 \x01(\v2\f.common.UserR\x06sender\x12(\n" +
+	"\breceiver\x18\x04 \x01(\v2\f.common.UserR\breceiver\x12$\n" +
+	"\x0eis_user_sender\x18\x05 \x01(\bR\fisUserSender\"2\n" +
+	"\x17GetUserChatRoomsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"I\n" +
+	"\x18GetUserChatRoomsResponse\x12-\n" +
+	"\n" +
+	"chat_rooms\x18\x01 \x03(\v2\x0e.chat.ChatRoomR\tchatRooms\"Q\n" +
+	"\x11CreateRoomRequest\x12\x1b\n" +
+	"\tsender_id\x18\x01 \x01(\tR\bsenderId\x12\x1f\n" +
+	"\vreceiver_id\x18\x02 \x01(\tR\n" +
+	"receiverId\"-\n" +
+	"\x12CreateRoomResponse\x12\x17\n" +
+	"\aroom_id\x18\x01 \x01(\tR\x06roomId2\xa1\x01\n" +
+	"\vChatService\x12?\n" +
+	"\n" +
+	"CreateRoom\x12\x17.chat.CreateRoomRequest\x1a\x18.chat.CreateRoomResponse\x12Q\n" +
+	"\x10GetUserChatRooms\x12\x1d.chat.GetUserChatRoomsRequest\x1a\x1e.chat.GetUserChatRoomsResponseB4Z2github.com/Dev-Siri/sero/backend/proto/chat;chatpbb\x06proto3"
 
-var file_proto_chat_proto_goTypes = []any{}
+var (
+	file_proto_chat_proto_rawDescOnce sync.Once
+	file_proto_chat_proto_rawDescData []byte
+)
+
+func file_proto_chat_proto_rawDescGZIP() []byte {
+	file_proto_chat_proto_rawDescOnce.Do(func() {
+		file_proto_chat_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_chat_proto_rawDesc), len(file_proto_chat_proto_rawDesc)))
+	})
+	return file_proto_chat_proto_rawDescData
+}
+
+var file_proto_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_proto_chat_proto_goTypes = []any{
+	(*ChatRoom)(nil),                 // 0: chat.ChatRoom
+	(*GetUserChatRoomsRequest)(nil),  // 1: chat.GetUserChatRoomsRequest
+	(*GetUserChatRoomsResponse)(nil), // 2: chat.GetUserChatRoomsResponse
+	(*CreateRoomRequest)(nil),        // 3: chat.CreateRoomRequest
+	(*CreateRoomResponse)(nil),       // 4: chat.CreateRoomResponse
+	(*commonpb.User)(nil),            // 5: common.User
+}
 var file_proto_chat_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	5, // 0: chat.ChatRoom.sender:type_name -> common.User
+	5, // 1: chat.ChatRoom.receiver:type_name -> common.User
+	0, // 2: chat.GetUserChatRoomsResponse.chat_rooms:type_name -> chat.ChatRoom
+	3, // 3: chat.ChatService.CreateRoom:input_type -> chat.CreateRoomRequest
+	1, // 4: chat.ChatService.GetUserChatRooms:input_type -> chat.GetUserChatRoomsRequest
+	4, // 5: chat.ChatService.CreateRoom:output_type -> chat.CreateRoomResponse
+	2, // 6: chat.ChatService.GetUserChatRooms:output_type -> chat.GetUserChatRoomsResponse
+	5, // [5:7] is the sub-list for method output_type
+	3, // [3:5] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_proto_init() }
@@ -47,12 +357,13 @@ func file_proto_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_proto_rawDesc), len(file_proto_chat_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_proto_chat_proto_goTypes,
 		DependencyIndexes: file_proto_chat_proto_depIdxs,
+		MessageInfos:      file_proto_chat_proto_msgTypes,
 	}.Build()
 	File_proto_chat_proto = out.File
 	file_proto_chat_proto_goTypes = nil

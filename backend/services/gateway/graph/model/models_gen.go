@@ -19,6 +19,13 @@ type AuthenticatedUser struct {
 	Token    string   `json:"token"`
 }
 
+type ChatRoom struct {
+	RoomID    string `json:"roomId"`
+	CreatedAt string `json:"createdAt"`
+	Sender    *User  `json:"sender"`
+	Receiver  *User  `json:"receiver"`
+}
+
 type CompleteAuthInput struct {
 	SessionID string `json:"sessionId"`
 	Phone     string `json:"phone"`
@@ -58,6 +65,15 @@ type Query struct {
 type ResendOtpInput struct {
 	SessionID string `json:"sessionId"`
 	Phone     string `json:"phone"`
+}
+
+type RoomMembers struct {
+	SenderID   string `json:"senderId"`
+	ReceiverID string `json:"receiverId"`
+}
+
+type RoomNavInfo struct {
+	RoomID string `json:"roomId"`
 }
 
 type Session struct {

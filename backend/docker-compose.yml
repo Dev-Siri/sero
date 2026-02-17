@@ -1,5 +1,7 @@
 services:
   gateway:
+    mem_limit: 512m
+    cpu_count: 1
     build:
       dockerfile: services/gateway/Dockerfile
       context: .
@@ -12,9 +14,12 @@ services:
       - PORT=8000
       - AUTH_SERVICE_URL=auth:8080
       - ATTACHMENT_SERVICE_URL=attachment:8081
+      - CHAT_SERVICE_URL=chat:8082
     depends_on:
       - auth
   auth:
+    mem_limit: 512m
+    cpu_count: 1
     build:
       dockerfile: services/auth/Dockerfile
       context: .
@@ -24,6 +29,8 @@ services:
     environment:
       - PORT=8080
   attachment:
+    mem_limit: 1g
+    cpu_count: 1
     build:
       dockerfile: services/attachment/Dockerfile
       context: .
@@ -32,3 +39,14 @@ services:
     env_file: services/attachment/.env
     environment:
       - PORT=8081
+  chat:
+    mem_limit: 512m
+    cpu_count: 1
+    build:
+      dockerfile: services/chat/Dockerfile
+      context: .
+      tags:
+        - sero/backend/services/chat
+    env_file: services/chat/.env
+    environment:
+      - PORT=8082

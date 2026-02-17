@@ -9,9 +9,9 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/Dev-Siri/sero/backend/services/gateway/clients"
 	"github.com/Dev-Siri/sero/backend/services/gateway/constants"
-	"github.com/Dev-Siri/sero/backend/services/gateway/env"
 	"github.com/Dev-Siri/sero/backend/services/gateway/graph"
 	"github.com/Dev-Siri/sero/backend/services/gateway/middleware"
+	"github.com/Dev-Siri/sero/backend/shared/env"
 	shared_env "github.com/Dev-Siri/sero/backend/shared/env"
 	"github.com/valyala/fasthttp/fasthttpadaptor"
 
@@ -19,6 +19,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"go.uber.org/zap"
+)
+
+const (
+	serverName     = "go-fiber"
+	appName        = "sero/api"
+	allowedMethods = "GET,POST"
 )
 
 func main() {
@@ -40,9 +46,15 @@ func main() {
 		logging.Logger.Error("Failed to connect to Attachment Service over gRPC.", zap.Error(err))
 	}
 
+	chatService, err := clients.CreateChatClient()
+	if err != nil {
+		logging.Logger.Error("Failed to connect to Attachment Service over gRPC.", zap.Error(err))
+	}
+
 	graphConfig := graph.Config{Resolvers: &graph.Resolver{
 		AuthService:       authService,
 		AttachmentService: attachmentService,
+		ChatService:       chatService,
 	}}
 
 	server := handler.NewDefaultServer(graph.NewExecutableSchema(graphConfig))
@@ -57,8 +69,8 @@ func main() {
 	port := shared_env.GetPORT()
 	addr := ":" + port
 	app := fiber.New(fiber.Config{
-		ServerHeader:            constants.ServerName,
-		AppName:                 constants.AppName,
+		ServerHeader:            serverName,
+		AppName:                 appName,
 		EnableTrustedProxyCheck: true,
 		TrustedProxies:          []string{"0.0.0.0/0"},
 		ProxyHeader:             "CF-Connecting-IP",
@@ -66,7 +78,7 @@ func main() {
 
 	corsConfig := cors.New(cors.Config{
 		AllowOrigins: env.GetCorsOrigin(),
-		AllowMethods: constants.AllowedMethods,
+		AllowMethods: allowedMethods,
 	})
 	app.Use(corsConfig)
 	app.Use(middleware.LogMiddleware)

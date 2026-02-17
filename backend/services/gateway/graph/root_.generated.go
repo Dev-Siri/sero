@@ -53,8 +53,16 @@ type ComplexityRoot struct {
 		UserID   func(childComplexity int) int
 	}
 
+	ChatRoom struct {
+		CreatedAt func(childComplexity int) int
+		Receiver  func(childComplexity int) int
+		RoomID    func(childComplexity int) int
+		Sender    func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CompleteAuth      func(childComplexity int, authInfo model.CompleteAuthInput) int
+		CreateRoom        func(childComplexity int, members model.RoomMembers) int
 		CreateSession     func(childComplexity int, phone string) int
 		Empty             func(childComplexity int) int
 		ResendOtp         func(childComplexity int, resendInfo model.ResendOtpInput) int
@@ -68,9 +76,14 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Empty        func(childComplexity int) int
-		GetSignedURL func(childComplexity int, fileInfo model.FileInfo) int
-		GetUser      func(childComplexity int, userID string) int
+		Empty            func(childComplexity int) int
+		GetSignedURL     func(childComplexity int, fileInfo model.FileInfo) int
+		GetUser          func(childComplexity int, userID string) int
+		GetUserChatRooms func(childComplexity int, userID string) int
+	}
+
+	RoomNavInfo struct {
+		RoomID func(childComplexity int) int
 	}
 
 	Session struct {
@@ -139,6 +152,34 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.AuthenticatedUser.UserID(childComplexity), true
 
+	case "ChatRoom.createdAt":
+		if e.complexity.ChatRoom.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ChatRoom.CreatedAt(childComplexity), true
+
+	case "ChatRoom.receiver":
+		if e.complexity.ChatRoom.Receiver == nil {
+			break
+		}
+
+		return e.complexity.ChatRoom.Receiver(childComplexity), true
+
+	case "ChatRoom.roomId":
+		if e.complexity.ChatRoom.RoomID == nil {
+			break
+		}
+
+		return e.complexity.ChatRoom.RoomID(childComplexity), true
+
+	case "ChatRoom.sender":
+		if e.complexity.ChatRoom.Sender == nil {
+			break
+		}
+
+		return e.complexity.ChatRoom.Sender(childComplexity), true
+
 	case "Mutation.completeAuth":
 		if e.complexity.Mutation.CompleteAuth == nil {
 			break
@@ -150,6 +191,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CompleteAuth(childComplexity, args["authInfo"].(model.CompleteAuthInput)), true
+
+	case "Mutation.createRoom":
+		if e.complexity.Mutation.CreateRoom == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createRoom_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateRoom(childComplexity, args["members"].(model.RoomMembers)), true
 
 	case "Mutation.createSession":
 		if e.complexity.Mutation.CreateSession == nil {
@@ -292,6 +345,25 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.GetUser(childComplexity, args["userId"].(string)), true
 
+	case "Query.getUserChatRooms":
+		if e.complexity.Query.GetUserChatRooms == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getUserChatRooms_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetUserChatRooms(childComplexity, args["userId"].(string)), true
+
+	case "RoomNavInfo.roomId":
+		if e.complexity.RoomNavInfo.RoomID == nil {
+			break
+		}
+
+		return e.complexity.RoomNavInfo.RoomID(childComplexity), true
+
 	case "Session.sessionId":
 		if e.complexity.Session.SessionID == nil {
 			break
@@ -369,6 +441,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPresignedFileInfo,
 		ec.unmarshalInputPublicKeyInput,
 		ec.unmarshalInputResendOtpInput,
+		ec.unmarshalInputRoomMembers,
 	)
 	first := true
 
@@ -465,7 +538,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
 }
 
-//go:embed "schemas/attachment.graphqls" "schemas/auth.graphqls" "schemas/base.graphqls"
+//go:embed "schemas/attachment.graphqls" "schemas/auth.graphqls" "schemas/base.graphqls" "schemas/chat.graphqls"
 var sourcesFS embed.FS
 
 func sourceData(filename string) string {
@@ -480,5 +553,6 @@ var sources = []*ast.Source{
 	{Name: "schemas/attachment.graphqls", Input: sourceData("schemas/attachment.graphqls"), BuiltIn: false},
 	{Name: "schemas/auth.graphqls", Input: sourceData("schemas/auth.graphqls"), BuiltIn: false},
 	{Name: "schemas/base.graphqls", Input: sourceData("schemas/base.graphqls"), BuiltIn: false},
+	{Name: "schemas/chat.graphqls", Input: sourceData("schemas/chat.graphqls"), BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)

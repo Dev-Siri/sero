@@ -5,3 +5,7 @@ import "github.com/Dev-Siri/sero/backend/proto/attachmentpb"
 type AttachmentService struct {
 	attachmentpb.UnimplementedAttachmentServiceServer
 }
+
+func NewAttachmentService() *AttachmentService {
+	return &AttachmentService{}
+}

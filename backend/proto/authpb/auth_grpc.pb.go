@@ -8,6 +8,7 @@ package authpb
 
 import (
 	context "context"
+	commonpb "github.com/Dev-Siri/sero/backend/proto/commonpb"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -43,7 +44,7 @@ type AuthServiceClient interface {
 	UpdateDisplayName(ctx context.Context, in *UpdateDisplayNameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UpdatePicture(ctx context.Context, in *UpdatePictureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UpdateStatus(ctx context.Context, in *UpdateStatusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	FetchUser(ctx context.Context, in *FetchUserRequest, opts ...grpc.CallOption) (*User, error)
+	FetchUser(ctx context.Context, in *FetchUserRequest, opts ...grpc.CallOption) (*commonpb.User, error)
 	UploadPublicKey(ctx context.Context, in *UploadPublicKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RevokePublicKey(ctx context.Context, in *RevokePublicKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -126,9 +127,9 @@ func (c *authServiceClient) UpdateStatus(ctx context.Context, in *UpdateStatusRe
 	return out, nil
 }
 
-func (c *authServiceClient) FetchUser(ctx context.Context, in *FetchUserRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *authServiceClient) FetchUser(ctx context.Context, in *FetchUserRequest, opts ...grpc.CallOption) (*commonpb.User, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(User)
+	out := new(commonpb.User)
 	err := c.cc.Invoke(ctx, AuthService_FetchUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -167,7 +168,7 @@ type AuthServiceServer interface {
 	UpdateDisplayName(context.Context, *UpdateDisplayNameRequest) (*emptypb.Empty, error)
 	UpdatePicture(context.Context, *UpdatePictureRequest) (*emptypb.Empty, error)
 	UpdateStatus(context.Context, *UpdateStatusRequest) (*emptypb.Empty, error)
-	FetchUser(context.Context, *FetchUserRequest) (*User, error)
+	FetchUser(context.Context, *FetchUserRequest) (*commonpb.User, error)
 	UploadPublicKey(context.Context, *UploadPublicKeyRequest) (*emptypb.Empty, error)
 	RevokePublicKey(context.Context, *RevokePublicKeyRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAuthServiceServer()
@@ -201,7 +202,7 @@ func (UnimplementedAuthServiceServer) UpdatePicture(context.Context, *UpdatePict
 func (UnimplementedAuthServiceServer) UpdateStatus(context.Context, *UpdateStatusRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateStatus not implemented")
 }
-func (UnimplementedAuthServiceServer) FetchUser(context.Context, *FetchUserRequest) (*User, error) {
+func (UnimplementedAuthServiceServer) FetchUser(context.Context, *FetchUserRequest) (*commonpb.User, error) {
 	return nil, status.Error(codes.Unimplemented, "method FetchUser not implemented")
 }
 func (UnimplementedAuthServiceServer) UploadPublicKey(context.Context, *UploadPublicKeyRequest) (*emptypb.Empty, error) {

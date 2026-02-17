@@ -6,7 +6,7 @@ import (
 	"github.com/Dev-Siri/sero/backend/proto/attachmentpb"
 	"github.com/Dev-Siri/sero/backend/services/attachment/bg"
 	"github.com/Dev-Siri/sero/backend/services/attachment/utils"
-	shared_db "github.com/Dev-Siri/sero/backend/shared/db"
+	"github.com/Dev-Siri/sero/backend/shared/db"
 	"github.com/Dev-Siri/sero/backend/shared/logging"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
@@ -21,7 +21,7 @@ func (a *AttachmentService) UploadFile(
 	attachmentId := uuid.NewString()
 	fileUrl := utils.GetUploadThingFileURI(request.FileKey)
 
-	_, err := shared_db.Database.Exec(`
+	_, err := db.Database.Exec(`
 		INSERT INTO Attachments(
 			attachment_id,
 			file_name,

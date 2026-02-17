@@ -8,7 +8,6 @@ import (
 
 func GetGoEnv() constants.GoEnv {
 	goEnv := os.Getenv("GO_ENV")
-
 	if goEnv == "prod" {
 		return constants.GoEnvProduction
 	}

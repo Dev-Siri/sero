@@ -1,0 +1,13 @@
+syntax = "proto3";
+package common;
+
+option go_package = "github.com/Dev-Siri/sero/backend/proto/commonpb";
+
+message User {
+  string user_id = 1;
+  string phone = 2;
+  string created_at = 3;
+  optional string display_name = 4;
+  optional string status_text = 5;
+  optional string picture_url = 6;
+}

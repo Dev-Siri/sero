@@ -52,7 +52,8 @@ func main() {
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(logging.GrpcLoggingInterceptor),
 	)
-	authpb.RegisterAuthServiceServer(grpcServer, &auth_rpcs.AuthService{})
+	authService := auth_rpcs.NewAuthService()
+	authpb.RegisterAuthServiceServer(grpcServer, authService)
 
 	logging.Logger.Info("AuthService listening on "+addr, zap.String("port", port))
 	if err := grpcServer.Serve(listener); err != nil {
